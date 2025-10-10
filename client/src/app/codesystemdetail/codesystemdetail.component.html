@@ -1,0 +1,120 @@
+<div class="odx-app-page">
+  <odx-area-header size="large">
+    {{ codesystemName }}
+  </odx-area-header>
+
+  <div class="odx-app-page__content" class="grid">
+    <div class="grid-container">
+      <div>
+        <table odxDataTable [variant]="tablevariantValue" [dataSource]="dataSource()"
+               [displayedColumns]="displayedColumns">
+
+          <ng-container odxColumnDef="row_id">
+            <th odxHeaderCell *odxHeaderCellDef>Row Index</th>
+            <td odxCell *odxCellDef="let element">{{ element.row_id }}</td>
+          </ng-container>
+
+
+          <ng-container odxColumnDef="observationtype">
+            <th odxHeaderCell *odxHeaderCellDef>Observation Type</th>
+            <td odxCell *odxCellDef="let element">{{ element.observationtype }}</td>
+          </ng-container>
+
+          <ng-container odxColumnDef="datatype">
+            <th odxHeaderCell *odxHeaderCellDef>Data Type</th>
+            <td odxCell *odxCellDef="let element">{{ element.datatype }}</td>
+          </ng-container>
+
+          <ng-container odxColumnDef="encode">
+            <th odxHeaderCell *odxHeaderCellDef>Encode</th>
+            <td odxCell *odxCellDef="let element">{{ element.encode }}</td>
+            <!--<th odxHeaderCell *odxHeaderCellDef>
+              <odx-form-field>
+                <input #filter placeholder="Encode" (input)="filterText.set(filter.value)" type="text"
+                       odxFormFieldControl/>
+              </odx-form-field>
+            </th>
+            <td odxCell *odxCellDef="let element">
+              <input [(ngModel)]="element.encode" (ngModelChange)="onEditEncode(element.tagkey, element.encode)"/>
+            </td>-->
+          </ng-container>
+
+          <ng-container odxColumnDef="parameterlabel">
+            <th odxHeaderCell *odxHeaderCellDef>Parameter Label</th>
+            <td odxCell *odxCellDef="let element">{{ element.parameterlabel }}</td>
+          </ng-container>
+
+          <ng-container odxColumnDef="encodesystem">
+            <th odxHeaderCell *odxHeaderCellDef>Encode System</th>
+            <td odxCell *odxCellDef="let element">{{ element.encodesystem }}</td>
+          </ng-container>
+
+          <ng-container odxColumnDef="subid">
+            <th odxHeaderCell *odxHeaderCellDef>Sub Id</th>
+            <td odxCell *odxCellDef="let element">{{ element.subid }}</td>
+          </ng-container>
+
+          <ng-container odxColumnDef="description">
+
+            <th odxHeaderCell *odxHeaderCellDef>
+              <odx-form-field>
+                <input #filter placeholder="Description" (input)="filterText.set(filter.value)" type="text"
+                       odxFormFieldControl/>
+              </odx-form-field>
+            </th>
+            <td odxCell *odxCellDef="let element">
+              <input [(ngModel)]="element.description"
+                     (ngModelChange)="onDescriptionInput(element.tagkey, element.description)"
+                     [disabled]="element.source === 'UOM' || !element.source"/>
+            </td>
+          </ng-container>
+
+          <ng-container odxColumnDef="source">
+            <th odxHeaderCell *odxHeaderCellDef>Source</th>
+            <td odxCell *odxCellDef="let element">{{ element.source }}</td>
+          </ng-container>
+
+          <ng-container odxColumnDef="channel">
+            <th odxHeaderCell *odxHeaderCellDef>Channel</th>
+            <td odxCell *odxCellDef="let element">{{ element.channel }}</td>
+          </ng-container>
+
+          <ng-container odxColumnDef="channelid">
+            <th odxHeaderCell *odxHeaderCellDef>Channel Id</th>
+            <td odxCell *odxCellDef="let element">{{ element.channelid }}</td>
+          </ng-container>
+
+
+          <!-- 无数据的展示 -->
+          <odx-table-empty>Not Found</odx-table-empty>
+
+        </table>
+      </div>
+
+
+    </div>
+  </div>
+  <div class="odx-app-page__footer">
+    <odx-paginator
+      [pageSize]="pageSize"
+      [length]="totalItems"
+      [pageIndex]="page - 1"
+      (pageChanged)="onPageChange($event)"
+    />
+  </div>
+
+
+  <!--  <div>
+      <div odxLayout="grid horizontal-end">
+        <div odxLayout="1 offset-11 ">
+          <button odxButton [variant]="variantValue" style="margin-right: 24px;">Copy</button>
+          <button odxButton [variant]="variantValue">Back</button>
+
+        </div>
+
+
+      </div>
+    </div>-->
+
+
+</div>

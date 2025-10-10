@@ -1,0 +1,36 @@
+<!--<h1>HL7 Parse Tool</h1>-->
+
+<odx-header>
+  <button odxButton odxMainMenuButton>
+    <odx-icon name="menu"/>
+  </button>
+</odx-header>
+<odx-main-menu
+  [title]="title"
+  [subtitle]="subtitle"
+  [copyright]="copyright"
+  [disabled]=false
+  [isOpen]=true
+>
+</odx-main-menu>
+<main class="odx-app-main">
+  <aside class="odx-app-sidebar">
+    <odx-rail-navigation #railNavigation>
+      <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/patient-query']">
+        Patient Query
+      </a>
+      <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/config']">
+        Configuration
+      </a>
+      <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/codesystem']">
+        Code System
+      </a>
+
+    </odx-rail-navigation>
+  </aside>
+  <router-outlet></router-outlet>
+</main>
+
+
+
+

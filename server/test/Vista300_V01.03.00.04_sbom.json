@@ -1,0 +1,1004 @@
+{
+	"bomFormat": "CycloneDX",
+	"specVersion": "1.4",
+	"serialNumber": "urn:uuid:0ff930a8-1b6a-42e4-bcb4-4c7456a88c81",
+	"version": 1,
+	"metadata": {
+		"timestamp": "2025-04-27T19:30:00Z",
+		"tools": [
+		],
+		"manufacture": {
+			"name": "Draeger"
+		},
+		"component": {
+			"name": "Vista300 Application",
+			"type": "application",
+			"version": "01.03.00.04",
+			"bom-ref": "1e8117e6-27fa-5aa4-8070-4637413e1ef9",
+			"purl": "pkg:generic/Vista300_Application@01.03.00.04",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "0cdc4aa9b919aa56f62a685602464f255a9e32ff"
+				}
+			]
+		},
+		"authors": [
+			{
+				"name": "Edan"
+			}
+		]
+	},
+	"components": [
+		{
+			"type": "library",
+			"name": "nlohmann_json",
+			"version": "3.9.1",
+			"supplier": {
+				"name": "Niels Lohmann",
+				"type": "person",
+				"url":"https://json.nlohmann.me/"
+			},
+			"author": "Niels Lohmann",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "134f20ddb1e8b69905fde321300af0d2ce2c7ab9"
+				}
+			],
+			"bom-ref": "2d053b90-84de-4fda-9773-fbd72c8f536b",
+			"purl": "pkg:github/nlohmann/json@db78ac1"
+		},
+		{
+			"type": "library",
+			"name": "Asio",
+			"version": "1.18.0",
+			"supplier": {
+				"name": "Chris Kohlhoff",
+				"type": "person",
+				"url": "https://www.boost.org/"
+			},
+			"author": "Chris Kohlhoff",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "82067df3653da29bbe5fa30fa3bf660823fcbff1"
+				}
+			],
+			"bom-ref": "58a1ec68-b511-4e73-9f55-8fec756b4e9b",
+			"purl": "pkg:github/chriskohlhoff/asio@be7badc"
+		},
+		{
+			"type": "library",
+			"name": "OpenSSL",
+			"version": "3.0.13",
+			"supplier": {
+				"name": "OpenSSL Software Foundation",
+				"type": "organization",
+				"url": "https://www.openssl.org/"
+
+			},
+			"author": "OpenSSL Project",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "18b985dcd3fc0bab54cc4bfc10fa9a80ce9e345d"
+				}
+			],
+			"bom-ref": "0ecb8e54-21ac-5860-979f-7e167aee12bb",
+			"cpe": "cpe:2.3:a:openssl:openssl:3.0.13:*:*:*:*:*:*:*",
+			"purl": "pkg:generic/openssl.org/openssl@3.0.13"
+		},
+		{
+			"type": "library",
+			"name": "ProtoBuf",
+			"version": "3.19.4.0",
+			"supplier": {	
+				"name": "Google LLC",
+				"type": "organization",
+				"url": "https://developers.google.com/protocol-buffers"
+			},
+			"author": "Google",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "499b1b2be5ae9de47f3ba1a3e4578c4bb1d77595"
+				}
+			],
+			"bom-ref": "4a3b73fa-a798-40c8-a85f-678920bb548e",
+			"cpe": "cpe:2.3:a:google:protobuf:3.19.4.0:-:*:*:*:*:*:*",
+			"purl": "pkg:github/protocolbuffers/protobuf@3.19.4.0"
+		},
+		{
+			"type": "library",
+			"name": "gRPC",
+			"version": "1.62.1",
+			"supplier": {
+				"name": "Google LLC",
+				"type": "organization",
+				"url": "https://grpc.io/"
+			},
+			"author": "Google",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "fc3bc7dfa5397ffee187576201a1cff7b3243980"
+				}
+			],
+			"bom-ref": "0c516ae5-cccb-570b-b97d-572b7a7f4e76",
+			"cpe": "cpe:2.3:a:grpc:grpc:1.62.1:*:*:*:*:-:*:*",
+			"purl": "pkg:github/grpc/grpc@1.62.1"
+		},
+		{
+			"type": "library",
+			"name": "Spdlog",
+			"version": "1.8.1",
+			"supplier": {
+				"name": "Gabi Melman",
+				"type": "person",
+				"url": "https://github.com/gabime/spdlog"
+			},
+			"author": "Gabi Melmam",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "42afc79371780d61b928d59ce44cef17cd5f1626"
+				}
+			],
+			"bom-ref": "daac618d-aad1-4427-b84d-97d26678adef",
+			"purl": "github/gabime/spdlog@cbe9448"
+		},
+		{
+			"type": "library",
+			"name": "QT",
+			"version": "5.15.14",
+			"supplier": {
+				"name": "The Qt Company",
+				"type": "organization",
+				"url": "https://www.qt.io/"
+			},
+			"author": "Qt",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "a821dbbb7c032c3aa820000305c5d8aac06e38f4"
+				}
+			],
+			"bom-ref": "31dad5c4-83ac-5b8f-8e13-5dc619532ab7",
+			"purl": "pkg:generic/Qt/Qt@5.15.14"
+		},
+		{
+			"type": "library",
+			"name": "BusyBox",
+			"version": "1.31.1",
+			"supplier": {
+				"name": "BusyBox Developers",
+				"type": "organization",
+				"url": "https://www.busybox.net/"
+			},
+			"author": "GNU",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "d5514f5cf8eb89a3b20ac3b965f4463f14a5709a"
+				}
+			],
+			"bom-ref": "68400866-b7ea-43a0-8c1b-0e762dc16bc0",
+			"cpe": "cpe:2.3:a:busybox:busybox:1.31.1:*:*:*:*:*:*:*",
+			"purl": "pkg:github/mirror/busybox@1.31.1"
+		},
+		{
+			"type": "library",
+			"name": "iptables",
+			"version": "1.8.4",
+			"supplier": {
+				"name": "Netfilter Project",
+				"type": "organization",
+				"url": "https://netfilter.org/"
+			},
+			"author": "GNU",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "cd5fe776fb2b0479b3234758fc333777caa1239b"
+				}
+			],
+			"bom-ref": "f0d0a9f9-e440-40d4-9e67-c6cca2f98f55",
+			"cpe": "cpe:2.3:a:netfilter:iptables:1.8.4:*:*:*:*:*:*:*",
+			"purl": "pkg:generic/netfilter/iptables@1.31.1"
+		},
+		{
+			"type": "library",
+			"name": "TOMOYO Linux",
+			"version": "2.6.1",
+			"supplier": {
+				"name": "TOMOYO Linux Project",
+				"type": "organization",
+				"url": "https://tomoyo.osdn.jp/"
+			},
+			"author": "TOMOYO Linux Project",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "6bb634f2c493d28e51e1ac7d2c8bf9150022db92"
+				}
+			],
+			"bom-ref": "74d816f9-807d-4f5a-a563-b50b9bb43860",
+			"purl": "pkg:deb/debian/tomoyo-tools@2.6.1-20210910-1"
+		},
+		{
+			"type": "library",
+			"name": "Linux",
+			"version": "5.4.106",
+			"supplier": {
+				"name": "The Linux Foundation",
+				"type": "organization",
+				"url": "https://www.linuxfoundation.org/"
+			},
+			"author": "Linux Foundation",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "24d1deacc4cde107ff64d7b168e8f4cc2ac52e94"
+				}
+			],
+			"bom-ref": "f2cb96cc-1397-41ac-bcbb-5917ad654894",
+			"cpe": "cpe:2.3:o:linux:linux_kernel:5.4.106:*:*:*:*:*:*:*",
+			"purl": "pkg:github/kernel/git/linux@5.4.106"
+		},
+		{
+			"type": "library",
+			"name": "Glibc",
+			"version": "2.30",
+			"supplier": {
+				"name": "GNU Project",
+				"type": "organization",
+				"url": "https://www.gnu.org/software/libc/"
+			},
+			"author": "GNU",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "a71bcb733e1619be3b3de050a7f8de8037344103"
+				}
+			],
+			"bom-ref": "d075a4d6-55ca-4f7a-a8d4-d89b6d57f2c1",
+			"cpe": "cpe:2.3:a:gnu:glibc:2.30:*:*:*:*:*:*:*",
+			"purl": "pkg:generic/mirror/gnu/glibc@2.30"
+		},
+		{
+			"type": "library",
+			"name": "fontconfig",
+			"version": "2.12.6",
+			"supplier": {
+				"name": "Fontconfig Developers",
+				"type": "organization",
+				"url": "https://www.freedesktop.org/wiki/Software/fontconfig/"
+			},
+			"author": "Keith Packard",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "cae963814ba4bc41f3c96876604d33fc3abfc572"
+				}
+			],
+			"bom-ref": "0c4d336a-84e7-5e0c-93d1-cb0ae2548640",
+			"cpe": "cpe:2.3:a:fontconfig_project:fontconfig:2.12.6:*:*:*:*:*:*:*",
+			"purl": "pkg:github/freedesktop/fontconfig@2.12.6"
+		},
+		{
+			"type": "library",
+			"name": "jq",
+			"version": "1.6",
+			"supplier": {
+				"name": "Stephen Dolan",
+				"type": "person",
+				"url": "https://stedolan.github.io/jq/"
+			},
+			"author": "Stephen Dolan",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "73bcbdc45be4db907a864e829b06cd869f77f4f7"
+				}
+			],
+			"bom-ref": "cf911b27-e795-5ba9-a695-a234ef59978c",
+			"purl": "pkg:github/stedolan/jq@1.6"
+		},
+		{
+			"type": "library",
+			"name": "ncurses",
+			"version": "6.4",
+			"supplier": {
+				"name": "Thomas E. Dickey",
+				"type": "person",
+				"url": "https://invisible-island.net/ncurses/"
+			},
+			"author": "GNU",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "bb5eb3f34b3ecd5bac8d0b58164b847f135b3d62"
+				}
+			],
+			"bom-ref": "d0d5685d-98d0-5b09-9d90-740811112b3b",
+			"cpe": "cpe:2.3:a:gnu:ncurses:6.1:*:*:*:*:*:*:*",
+			"purl": "pkg:github/mirror/ncurses@6.4"
+		},
+		{
+			"type": "library",
+			"name": "wget",
+			"version": "1.20.3",
+			"supplier": {
+				"name": "GNU Project",
+				"type": "organization",
+				"url": "https://www.gnu.org/software/wget/"
+			},
+			"author": "GNU",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "2b886eab5b97267cc358ab35e42d14d33d6dfc95"
+				}
+			],
+			"bom-ref": "c797f8ea-4526-52a9-a900-1f88a73215a8",
+			"purl": "pkg:github/mirror/wget@1.20.3"
+		},
+		{
+			"type": "library",
+			"name": "pcre",
+			"version": "8.44",
+			"supplier": {
+				"name": "Philip Hazel",
+				"type": "person",
+				"url": "https://www.pcre.org/"
+			},
+			"author": "Philip Hazel",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "934324e2d0e7c16d144c52817ab88f6f70c24692"
+				}
+			],
+			"bom-ref": "8e180bd7-6d45-5f34-998b-3d2f742ea0ad",
+			"cpe": "cpe:2.3:a:pcre:pcre:8.44:*:*:*:*:*:*:*",
+			"purl": "pkg:github/rurban/pcre@8.44"
+		},
+		{
+			"type": "library",
+			"name": "ImageMagick",
+			"version": "7.0.11-1",
+			"supplier": {
+				"name": "ImageMagick Studio LLC",
+				"type": "organization",
+				"url": "https://imagemagick.org/"
+			},
+			"author": "ImageMagick Studio LLC",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "7cb5c68c07724ce0c8bbcc222385edd42251c4a0"
+				}
+			],
+			"bom-ref": "1704932b-2d64-5368-b2ff-3ef21874a614",
+			"cpe": "cpe:2.3:a:imagemagick:imagemagick:7.0.11-1:*:*:*:*:*:*:*",
+			"purl": "pkg:github/ImageMagick/ImageMagick@7.0.11-1"
+		},
+		{
+			"type": "library",
+			"name": "freetype",
+			"version": "2.9.1",
+			"supplier": {
+				"name": "FreeType Project",
+				"type": "organization",
+				"url": "https://freetype.org/"
+			},
+			"author": "FreeType Project",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "220c82062171c513e4017c523d196933c9de4a7d"
+				}
+			],
+			"bom-ref": "5f53d830-136b-59a4-9ba9-bed578ae1225",
+			"cpe": "cpe:2.3:a:freetype:freetype:2.9.1:*:*:*:*:*:*:*",
+			"purl": "pkg:github/freetype/freetype@2.9.1"
+		},
+		{
+			"type": "library",
+			"name": "expat",
+			"version": "2.2.6",
+			"supplier": {
+				"name": "Expat Developers",
+				"type": "organization",
+				"url": "https://libexpat.github.io/"
+			},
+			"author": "Expat Project",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "c8947fc3119a797b55485f2f7bdaaeb49cc9df01"
+				}
+			],
+			"bom-ref": "bd328155-8148-5f63-a9a9-1434a7051f6c",
+			"purl": "pkg:github/libexpat/libexpat@2.2.6"
+		},
+		{
+			"type": "library",
+			"name": "libjpeg-turbo",
+			"version": "2.0.6",
+			"supplier": {
+				"name": "The libjpeg-turbo Project",
+				"type": "organization",
+				"url": "https://libjpeg-turbo.org/"
+			},
+			"author": "libjpeg-turbo Project",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "5406c7676d7df89fb4da791ad5af51202910fb25"
+				}
+			],
+			"bom-ref": "83e6a267-6c17-50f3-8dbc-00412428415d",
+			"cpe": "cpe:2.3:a:libjpeg-turbo:libjpeg-turbo:2.0.6:*:*:*:*:*:*:*",
+			"purl": "pkg:github/libjpeg-turbo/libjpeg-turbo@2.0.6"
+		},
+		{
+			"type": "library",
+			"name": "util-linux",
+			"version": "2.36",
+			"supplier": {
+				"name": "util-linux Maintainers",
+				"type": "organization",
+				"url": "https://github.com/util-linux/util-linux"
+			},
+			"author": "Linux Kernel Organization",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "cf99c3df18cf0a13033ec2d3d1a31587eba825d9"
+				}
+			],
+			"bom-ref": "23f46646-c8bf-5f72-80f5-3256cbc77e06",
+			"cpe": "cpe:2.3:a:kernel:util-linux:2.36:*:*:*:*:*:*:*",
+			"purl": "pkg:github/karelzak/util-linux@2.36"
+		},
+		{
+			"type": "library",
+			"name": "zlib",
+			"version": "1.2.12",
+			"supplier": {
+				"name": "Jean-loup Gailly and Mark Adler",
+				"type": "person",
+				"url": "https://zlib.net/"
+
+			},
+			"author": "GNU",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "37d26cd1138597c866b8e3e137156c82a0f0f960"
+				}
+			],
+			"bom-ref": "2958dc30-33f2-5de9-abee-ce24ff500fb7",
+			"cpe": "cpe:2.3:a:zlib:zlib:1.2.12:*:*:*:*:*:*:*",
+			"purl": "pkg:github/madler/zlib@1.2.12"
+		},
+		{
+			"type": "library",
+			"name": "e2fsprogs",
+			"version": "1.46.5",
+			"supplier": {
+				"name": "GNU Project",
+				"type": "organization",
+				"url": "https://www.gnu.org/software/e2fsprogs/"
+			},
+			"author": "GNU",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "5eb29684be3d0b1b4379afb1e0631fd4cca7ae0e"
+				}
+			],
+			"bom-ref": "00f5ed13-d686-5c99-9ae1-7a2ca1f0ba7c",
+			"cpe": "cpe:2.3:a:e2fsprogs_project:e2fsprogs:1.46.5:*:*:*:*:*:*:*",
+			"purl": "pkg:github/tytso/e2fsprogs@1.46.5"
+		},
+		{
+			"type": "library",
+			"name": "lvgl",
+			"version": "8.2.0",
+			"supplier": {
+				"name": "LVGL LLC",
+				"type": "organization",
+				"url": "https://lvgl.io/"
+			},
+			"author": "LVGL Project",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "d80b7dde4dfa3c25ef225a35a57d05fcd7d82eee"
+				}
+			],
+			"bom-ref": "2afeedaf-7c33-501e-932f-6af32ecf9ed4",
+			"purl": "pkg:github/lvgl/lvgl@8.2.0"
+		},
+		{
+			"type": "library",
+			"name": "cups",
+			"version": "2.4.7",
+			"supplier": {
+				"name": "OpenPrinting",
+				"type": "organization",
+				"url": "https://openprinting.github.io/"
+			},
+			"author": "OpenPrinting",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "9c6155dfa367eee9a88ad08cf83b1dc6c446309f"
+				}
+			],
+			"bom-ref": "fe5e8b0a-3725-51c2-a0fe-0cfe7bcd5775",
+			"cpe": "cpe:2.3:a:OpenPrinting:cups:2.4.7:*:*:*:*:*:*:*",
+			"purl": "pkg:github/OpenPrinting/cups@2.4.7"
+		},
+		{
+			"type": "library",
+			"name": "lcms2",
+			"version": "2.15",
+			"supplier": {
+				"name": "Little CMS",
+				"type": "organization",
+				"url": "https://www.littlecms.com/"
+			},
+			"author": "Littls CMS",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "b143ff29b03676119dbca30f13cbed72af15cce8"
+				}
+			],
+			"bom-ref": "7704c5a3-c285-54ab-8e5c-84015fd2bc91",
+			"purl": "pkg:github/mm2/Little-CMS/lcms2@2.15"
+		},
+		{
+			"type": "library",
+			"name": "qpdf",
+			"version": "10.5.0",
+			"supplier": {
+				"name": "QPDF",
+				"type": "organization",
+				"url": "https://qpdf.sourceforge.io/"
+			},
+			"author": "Jay Berkenbilt&Manfred Holger",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "3138fa0d2dd933eebcd39c1ce8c4e6ebb504c39e"
+				}
+			],
+			"bom-ref": "4eb15f91-ad3f-56f8-bb2d-4988e857eeee",
+			"purl": "pkg:github/qpdf/qpdf@10.5.0"
+		},
+		{
+			"type": "library",
+			"name": "poppler",
+			"version": "23.02.0",
+			"supplier": {
+				"name": "freedesktop.org",
+				"type": "organization",
+				"url": "https://poppler.freedesktop.org/"
+			},
+			"author": "freedesktop.org",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "c29baae071ec612c1eb284daffc7be269aae48ab"
+				}
+			],
+			"bom-ref": "2bcb27bc-356c-59d5-8679-d109f3f38f2d",
+			"purl": "pkg:github/poppler/poppler@23.02.0"
+		},
+		{
+			"type": "library",
+			"name": "cups-filters",
+			"version": "1.28.17",
+			"supplier": {
+				"name": "OpenPrinting",
+				"type": "organization",
+				"url": "https://openprinting.github.io/"
+			},
+			"author": "OpenPrinting",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "822375935104fdaf34015dee95fc057bc9424041"
+				}
+			],
+			"bom-ref": "81aafc1e-6bd5-50eb-8c2c-3db3e1352e70",
+			"purl": "pkg:github/OpenPrinting/cups-filters@1.28.17"
+		},
+		{
+			"type": "library",
+			"name": "nspr",
+			"version": "4.35",
+			"supplier": {
+				"name": "Mozilla Foundation",
+				"type": "organization",
+				"url": "https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR"
+			},
+			"author": "Mozilla",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "71267859a581d61fea8d7d36c25f716750271cac"
+				}
+			],
+			"bom-ref": "e8ef6ab5-7e59-5766-8809-03eafbd15c19",
+			"purl": "pkg:generic/mozilla/nspr@4.35"
+		},
+		{
+			"type": "library",
+			"name": "nss3",
+			"version": "3.85",
+			"supplier": {
+				"name": "Mozilla Foundation",
+				"type": "organization",
+				"url": "https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS"
+			},
+			"author": "Mozilla",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "d9c6c9d0b4f3f92c0051bee1b60fd34a96590f14"
+				}
+			],
+			"bom-ref": "b220fcae-04a9-5059-93fe-5357bb8c24ba",
+			"purl": "pkg:github/nss-dev/nss/nss3@3.85"
+		},
+		{
+			"type": "library",
+			"name": "tslib",
+			"version": "1.22",
+			"supplier": {
+				"name": "tslib.org",
+				"type": "organization",
+				"url": "https://tslib.org/"
+			},
+			"author": "tslib.org",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "dcb24932aea8eb90bdecdd6bba19bc5e88f13e5e"
+				}
+			],
+			"bom-ref": "af14b771-5aa2-5dc2-9dd0-c120926efac3",
+			"purl": "pkg:github/libts/tslib/tslib@1.22"
+		},
+		{
+			"type": "library",
+			"name": "zstd",
+			"version": "1.5.0",
+			"supplier": {
+				"name": "Facebook",
+				"type": "organization",
+				"url": "https://facebook.github.io/zstd/"
+			},
+			"author": "Facebook",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "c53019729e3a595f0104facab6533d78296a2945"
+				}
+			],
+			"bom-ref": "9fc080a2-666e-5136-8951-2af9b4482311",
+			"purl": "pkg:github/facebook/zstd/zstd@1.5.0"
+		},
+		{
+			"type": "library",
+			"name": "systemd",
+			"version": "244.5",
+			"supplier": {
+				"name": "systemd.io",
+				"type": "organization",
+				"url": "https://systemd.io/"
+			},
+			"author": "systemd.io",
+			"hashes": [
+				{
+					"alg": "SHA-1",
+					"content": "b3c654d74b6cfed7909ea51e490a10f9f7a8c178"
+				}
+			],
+			"bom-ref": "0c8a6f61-ddf2-56ae-8ce2-f1d005ea4966",
+			"cpe": "cpe:2.3:a:systemd_project:systemd:1:*:*:*:*:*:*:*",
+			"purl": "pkg:github/systemd/systemd/systemd@244.5"
+		}
+	],
+	"dependencies": [
+		{
+			"ref": "pkg:generic/Vista300_Application@01.03.00.04",
+			"dependsOn": [
+				"pkg:generic/nx/nxcore/Vista300-1.3.z@01.03.00.04?commit=061aa2ce",
+				"pkg:generic/nx/nxapp/Vista300-1.3.z@01.03.00.04?commit=229d5a50",
+				"pkg:github/mirror/busybox@1.31.1",
+				"pkg:generic/netfilter/iptables@1.31.1",
+				"pkg:deb/debian/tomoyo-tools@2.6.1-20210910-1",
+				"pkg:github/kernel/git/linux@5.4.106",
+				"pkg:github/freedesktop/fontconfig@2.12.6",
+				"pkg:github/stedolan/jq@1.6",
+				"pkg:github/mirror/ncurses@6.4",
+				"pkg:github/mirror/wget@1.20.3",
+				"pkg:github/libjpeg-turbo/libjpeg-turbo@2.0.6",
+				"pkg:github/karelzak/util-linux@2.36",
+				"pkg:github/madler/zlib@1.2.12",
+				"pkg:github/tytso/e2fsprogs@1.46.5",
+				"pkg:github/lvgl/lvgl@8.2.0",
+				"pkg:github/systemd/systemd/systemd@244.5"
+			]
+		},
+		{
+			"ref": "pkg:generic/nx/nxcore/Vista300-1.3.z@01.03.00.04?commit=061aa2ce",
+			"dependsOn": [
+				"pkg:github/nlohmann/json@db78ac1",
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:github/chriskohlhoff/asio@be7badc",
+				"pkg:generic/openssl.org/openssl@3.0.13",
+				"pkg:github/grpc/grpc@1.62.1",
+				"github/gabime/spdlog@cbe9448",
+				"pkg:generic/mozilla/nspr@4.35",
+				"pkg:github/nss-dev/nss/nss3@3.85",
+				"pkg:github/facebook/zstd/zstd@1.5.0"
+			]
+		},
+		{
+			"ref": "pkg:generic/nx/nxapp/Vista300-1.3.z@01.03.00.04?commit=229d5a50",
+			"dependsOn": [
+				"pkg:github/grpc/grpc@1.62.1",
+				"pkg:generic/openssl.org/openssl@3.0.13",
+				"github/gabime/spdlog@cbe9448",
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:generic/Qt/Qt@5.15.14",
+				"pkg:github/facebook/zstd/zstd@1.5.0",
+				"pkg:github/OpenPrinting/cups@2.4.7"
+			]
+		},
+		{
+			"ref": "pkg:github/chriskohlhoff/asio@be7badc",
+			"dependsOn": [
+				"pkg:generic/openssl.org/openssl@3.0.13",
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/nlohmann/json@db78ac1",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:generic/openssl.org/openssl@3.0.13",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/systemd/systemd/systemd@244.5",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/grpc/grpc@1.62.1",
+			"dependsOn": [
+				"pkg:generic/openssl.org/openssl@3.0.13",
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/protocolbuffers/protobuf@3.19.4.0",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "github/gabime/spdlog@cbe9448",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:generic/Qt/Qt@5.15.14",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:github/freetype/freetype@2.9.1",
+				"pkg:github/freedesktop/fontconfig@2.12.6",
+				"pkg:github/libts/tslib/tslib@1.22"
+			]
+		},
+		{
+			"ref": "pkg:github/mirror/busybox@1.31.1",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:generic/netfilter/iptables@1.31.1",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:github/kernel/git/linux@5.4.106"
+			]
+		},
+		{
+			"ref": "pkg:deb/debian/tomoyo-tools@2.6.1-20210910-1",
+			"dependsOn": [
+				"pkg:github/kernel/git/linux@5.4.106",
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/kernel/git/linux@5.4.106",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:generic/mirror/gnu/glibc@2.30",
+			"dependsOn": [
+			]
+		},
+		{
+			"ref": "pkg:github/freedesktop/fontconfig@2.12.6",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/stedolan/jq@1.6",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/mirror/ncurses@6.4",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/mirror/wget@1.20.3",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:github/rurban/pcre@8.44"
+			]
+		},
+		{
+			"ref": "pkg:github/rurban/pcre@8.44",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/libjpeg-turbo/libjpeg-turbo@2.0.6",
+			"dependsOn": [
+				"pkg:github/freetype/freetype@2.9.1",
+				"pkg:github/libexpat/libexpat@2.2.6"
+			]
+		},
+		{
+			"ref": "pkg:github/freetype/freetype@2.9.1",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/libexpat/libexpat@2.2.6",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/libjpeg-turbo/libjpeg-turbo@2.0.6",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/ImageMagick/ImageMagick@7.0.11-1",
+			"dependsOn": [
+				"pkg:github/freetype/freetype@2.9.1",
+				"pkg:github/libexpat/libexpat@2.2.6",
+				"pkg:github/libjpeg-turbo/libjpeg-turbo@2.0.6"
+			]
+		},
+		{
+			"ref": "pkg:github/karelzak/util-linux@2.36",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/madler/zlib@1.2.12",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/tytso/e2fsprogs@1.46.5",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/lvgl/lvgl@8.2.0",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/OpenPrinting/cups@2.4.7",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:github/OpenPrinting/cups-filters@1.28.17"
+			]
+		},
+		{
+			"ref": "pkg:github/OpenPrinting/cups-filters@1.28.17",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:github/poppler/poppler@23.02.0",
+				"pkg:github/qpdf/qpdf@10.5.0",
+				"pkg:github/freedesktop/fontconfig@2.12.6",
+				"pkg:github/madler/zlib@1.2.12"
+			]
+		},
+		{
+			"ref": "pkg:github/mm2/Little-CMS/lcms2@2.15",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:github/madler/zlib@1.2.12",
+				"pkg:github/libjpeg-turbo/libjpeg-turbo@2.0.6"
+			]
+		},
+		{
+			"ref": "pkg:github/qpdf/qpdf@10.5.0",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/poppler/poppler@23.02.0",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:github/mm2/Little-CMS/lcms2@2.15",
+				"pkg:github/libjpeg-turbo/libjpeg-turbo@2.0.6"
+			]
+		},
+		{
+			"ref": "pkg:generic/mozilla/nspr@4.35",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/nss-dev/nss/nss3@3.85",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30",
+				"pkg:generic/mozilla/nspr@4.35"
+			]
+		},
+		{
+			"ref": "pkg:github/libts/tslib/tslib@1.22",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		},
+		{
+			"ref": "pkg:github/facebook/zstd/zstd@1.5.0",
+			"dependsOn": [
+				"pkg:generic/mirror/gnu/glibc@2.30"
+			]
+		}
+	]
+}

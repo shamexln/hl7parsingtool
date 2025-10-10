@@ -1,0 +1,225 @@
+<div class="odx-app-page">
+  <odx-area-header size="large">
+    Patient Information Query
+  </odx-area-header>
+
+  <div class="grid">
+    <form odxForm [disabled]="false" odxLayout="grid" [formGroup]="formGroup">
+      <odx-form-field
+        [variant]="fieldstyle"
+      >
+        <input
+          type="text"
+          formControlName="patientid"
+          [attr.placeholder]=" 'Input PatientID' "
+          odxFormFieldControl
+          required (keyup.enter)="queryPatient(1)"
+        />
+      </odx-form-field>
+
+      <odx-form-field
+        [variant]="fieldstyle"
+      >
+        <odx-datepicker
+          formControlName="startdate"
+          [attr.placeholder]="'Start Date'"
+          odxFormFieldControl
+        >
+          <input odxDatepickerControl/>
+        </odx-datepicker>
+      </odx-form-field>
+
+
+      <odx-form-field
+        [variant]="fieldstyle"
+      >
+        <odx-datepicker
+          formControlName="enddate"
+          [attr.placeholder]=" 'End Date' "
+          odxFormFieldControl
+        >
+          <input odxDatepickerControl/>
+        </odx-datepicker>
+      </odx-form-field>
+
+      <button odxButton (click)="queryPatient(1)">Search Patient ID</button>
+
+
+      <button odxButton (click)="exportAllDataToExcel()" [disabled]="!patientData() || patientData().length === 0">
+        export all to Excel
+      </button>
+
+
+      <odx-form-field
+        [variant]="fieldstyle"
+      >
+        <odx-select
+          (optionSelected)="handlePageSizeChange()"
+          name="pageSizeValue"
+          [stringify]="stringify"
+          [identityMatcher]="identityMatcher"
+          formControlName="pageSizeValue"
+          odxFormFieldControl
+          style="width: 100%"
+        >
+          @for (item of selectOptions; track item.value) {
+            <odx-select-option [value]="item">
+              {{ item.label }}
+            </odx-select-option>
+          }
+        </odx-select>
+
+      </odx-form-field>
+    </form>
+
+  </div>
+  <div class="odx-app-page__content">
+
+    <table odxDataTable [variant]="variantValue" [dataSource]="dataSource()"
+           [displayedColumns]="displayedColumns">
+
+      <ng-container odxColumnDef="device_id">
+        <th odxHeaderCell *odxHeaderCellDef>Monitor GUID</th>
+        <td odxCell *odxCellDef="let element">{{ element.device_id }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="local_time">
+        <th odxHeaderCell *odxHeaderCellDef>Local Time</th>
+        <td odxCell *odxCellDef="let element">{{ element.local_time }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="Date">
+        <th odxHeaderCell *odxHeaderCellDef>Date</th>
+        <td odxCell *odxCellDef="let element">{{ element.Date }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="Time">
+        <th odxHeaderCell *odxHeaderCellDef>Time</th>
+        <td odxCell *odxCellDef="let element">{{ element.Time }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="Hour">
+        <th odxHeaderCell *odxHeaderCellDef>Hour</th>
+        <td odxCell *odxCellDef="let element">{{ element.Hour }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="bed_label">
+        <th odxHeaderCell *odxHeaderCellDef>Bed Label</th>
+        <td odxCell *odxCellDef="let element">{{ element.bed_label }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="pat_ID">
+        <th odxHeaderCell *odxHeaderCellDef>Patient ID</th>
+        <td odxCell *odxCellDef="let element">{{ element.pat_ID }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="mon_unit">
+        <th odxHeaderCell *odxHeaderCellDef>Monitoring Unit</th>
+        <td odxCell *odxCellDef="let element">{{ element.mon_unit }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="care_unit">
+        <th odxHeaderCell *odxHeaderCellDef>Care Unit</th>
+        <td odxCell *odxCellDef="let element">{{ element.care_unit }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="alarm_grade">
+        <th odxHeaderCell *odxHeaderCellDef>Alarm Grade</th>
+        <td odxCell *odxCellDef="let element">{{ element.alarm_grade }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="alarm_state">
+        <th odxHeaderCell *odxHeaderCellDef>Alarm State</th>
+        <td odxCell *odxCellDef="let element">{{ element.alarm_state }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="Alarm Grade 2">
+        <th odxHeaderCell *odxHeaderCellDef>Alarm Grade 2</th>
+        <td odxCell *odxCellDef="let element">{{ element['Alarm Grade 2'] }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="alarm_message">
+        <th odxHeaderCell *odxHeaderCellDef>Alarm Message</th>
+        <td odxCell *odxCellDef="let element">{{ element.alarm_message }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="param_id">
+        <th odxHeaderCell *odxHeaderCellDef>Param ID</th>
+        <td odxCell *odxCellDef="let element">{{ element.param_id }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="param_value">
+        <th odxHeaderCell *odxHeaderCellDef>Param Value</th>
+        <td odxCell *odxCellDef="let element">{{ element.param_value }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="param_uom">
+        <th odxHeaderCell *odxHeaderCellDef>Param UOM</th>
+        <td odxCell *odxCellDef="let element">{{ element.param_uom }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="param_upper_lim">
+        <th odxHeaderCell *odxHeaderCellDef>Param Upper Limit</th>
+        <td odxCell *odxCellDef="let element">{{ element.param_upper_lim }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="param_lower_lim">
+        <th odxHeaderCell *odxHeaderCellDef>Param Lower Limit</th>
+        <td odxCell *odxCellDef="let element">{{ element.param_lower_lim }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="Limit_Violation_Type">
+        <th odxHeaderCell *odxHeaderCellDef>Limit Violation Type</th>
+        <td odxCell *odxCellDef="let element">{{ element.Limit_Violation_Type }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="Limit_Violation_Value">
+        <th odxHeaderCell *odxHeaderCellDef>Limit Violation Value</th>
+        <td odxCell *odxCellDef="let element">{{ element.Limit_Violation_Value }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="sourcechannel">
+        <th odxHeaderCell *odxHeaderCellDef>Alarm Source</th>
+        <td odxCell *odxCellDef="let element">{{ element.sourcechannel }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="onset_tick">
+        <th odxHeaderCell *odxHeaderCellDef>Onset Tick</th>
+        <td odxCell *odxCellDef="let element">{{ element.onset_tick }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="alarm_duration">
+        <th odxHeaderCell *odxHeaderCellDef>Alarm Duration</th>
+        <td odxCell *odxCellDef="let element">{{ element.alarm_duration }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="change_time(UTC)">
+        <th odxHeaderCell *odxHeaderCellDef>Change Time (UTC)</th>
+        <td odxCell *odxCellDef="let element">{{ element['change_time(UTC)'] }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="change_tick">
+        <th odxHeaderCell *odxHeaderCellDef>Change Tick</th>
+        <td odxCell *odxCellDef="let element">{{ element.change_tick }}</td>
+      </ng-container>
+
+      <ng-container odxColumnDef="aborted">
+        <th odxHeaderCell *odxHeaderCellDef>Aborted</th>
+        <td odxCell *odxCellDef="let element">{{ element.aborted }}</td>
+      </ng-container>
+
+      <!-- 无数据的展示 -->
+      <odx-table-empty>Not Found</odx-table-empty>
+
+    </table>
+  </div>
+
+  <div class="odx-app-page__footer">
+    <odx-paginator
+      [pageSize]="pageSize"
+      [length]="totalItems"
+      [pageIndex]="page - 1"
+      (pageChanged)="onPageChange($event)"
+    />
+  </div>
+</div>

@@ -1,0 +1,23 @@
+/*.grid-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%; !* Ensure the container takes up the full height *!
+}
+
+.grid-container > div {
+  flex: 1; !* The table container will grow to fill available space *!
+  max-height: 70vh; !* Use max-height for a flexible height *!
+  overflow-y: auto; !* Explicitly enable vertical scrolling *!
+
+}*/
+
+/* Ensure the table displays properly */
+.odx-app-page__content {
+  display: flex;
+  overflow-x: auto; /* Allow horizontal scrolling if needed */
+  overflow-y: auto; /* Allow vertical scrolling */
+  flex: 1 1 auto; /* Allow content to grow and shrink */
+  padding: 0px;
+}
+
+
