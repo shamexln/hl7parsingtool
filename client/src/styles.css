@@ -1,3 +1,40 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@odx/icons/core/core-icons.css';
 @import '@odx/ui/core-theme.css';
+
+html, body,
+app-root {
+  height: 100%;
+  min-height: 100%;
+}
+
+
+
+/* Also make sure odx-app-page itself can shrink inside flex/grid layouts and arrange content/footer (scoped to patient page only) */
+.patient-page.odx-app-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* allow scroll area to shrink */
+  min-width: 0 !important;
+}
+
+/* Paginator should follow content and appear after the last table row (patient page only) */
+.patient-page .odx-paginator-footer {
+  flex: 0 0 auto;
+  position: static; /* no sticky overlay */
+  bottom: auto;
+  z-index: auto;
+  margin-top: 8px;
+}
+
+
+/* Layout fixes scoped to patient page only using :has() to avoid affecting other pages */
+.odx-app-main:has(.patient-page) {
+  display: flex;
+  min-height: 0; /* allow child page to shrink and show its own scrollbars */
+}
+
+.odx-app-main:has(.patient-page) > :not(.odx-app-sidebar) {
+  flex: 1 1 auto;
+  min-width: 0 !important; /* allow inner scroll containers to show horizontal scroll */
+}

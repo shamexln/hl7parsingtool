@@ -1,23 +1,44 @@
-/*.grid-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%; !* Ensure the container takes up the full height *!
+:host ::ng-deep .odx-app-page__content-scroll {
+  display: block;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important; /* allow flex/grid parents to shrink this box */
+  overflow-x: auto !important;
+  overflow-y: auto !important; /* was hidden: allow vertical scrolling */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable both-edges;
+  box-sizing: border-box;
+  padding-inline: 24px; /* visual gutters while keeping scrollbar on outer box */
+  flex: 1 1 auto;
+  min-height: 0; /* allow shrinking inside flex container */
 }
 
-.grid-container > div {
-  flex: 1; !* The table container will grow to fill available space *!
-  max-height: 70vh; !* Use max-height for a flexible height *!
-  overflow-y: auto; !* Explicitly enable vertical scrolling *!
+:host ::ng-deep .odx-app-page__content-inner {
+  padding: 0; /* padding moved to the scroll container */
+  box-sizing: border-box;
+  min-width: 0;
+}
 
-}*/
-
-/* Ensure the table displays properly */
-.odx-app-page__content {
-  display: flex;
-  overflow-x: auto; /* Allow horizontal scrolling if needed */
-  overflow-y: auto; /* Allow vertical scrolling */
-  flex: 1 1 auto; /* Allow content to grow and shrink */
-  padding: 0px;
+:host ::ng-deep .odx-app-page__content-inner table {
+  width: max-content !important;
+  min-width: max-content;
+  table-layout: auto !important;
 }
 
 
+/* No extra bottom padding; paginator is not sticky and follows content */
+:host ::ng-deep .odx-app-page__content-scroll {
+  padding-bottom: 0;
+}
+
+:host ::ng-deep .table-flow {
+  display: inline-block; /* shrink to table width so paginator aligns to table right */
+  width: max-content;
+  min-width: max-content;
+}
+
+:host ::ng-deep .table-flow .odx-paginator-footer {
+  display: flex;
+  justify-content: flex-end; /* right align within the table width */
+  margin-top: 8px;
+}

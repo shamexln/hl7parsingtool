@@ -143,16 +143,18 @@ function dbRunWithChanges(db, sql, params) {
  * Updates or inserts multiple tag records into the specified table in the database.
  * - Creates the table if it does not exist.
  * - For each tag, checks if it already exists (by tagkey).
- *   - If it exists, updates the record and increments affectedRows.
+ *   - If it exists, updates the record and increments affectedRows, unless `forceUpdate` is false.
  *   - If it does not exist, inserts a new record and increments affectedRows.
  * - Updates the encodeToTagMap with the new descriptions.
  * - Returns the total number of affected rows (updated or inserted).
  *
  * @param {string} tablename - The name of the table to update.
  * @param {Array} tags - The array of tag objects to upsert.
+ * @param {object} [options={forceUpdate: true}] - Options for the operation.
+ * @param {boolean} [options.forceUpdate=true] - If true, existing records will be updated.
  * @returns {Promise<number>} - The total number of affected rows.
  */
-async function updateDetailCodeSystem(tablename, tags) {
+async function updateDetailCodeSystem(tablename, tags, options = { forceUpdate: true }) {
     const db = new sqlite3.Database(DATABASE_FILE);
     let affectedRows = 0;
     try {
@@ -211,6 +213,9 @@ async function updateDetailCodeSystem(tablename, tags) {
             );
 
             if (row) {
+                if (!options.forceUpdate) {
+                    continue; // Skip update if forceUpdate is false
+                }
                 const changes = await dbRunWithChanges(
                     db,
                     `UPDATE ${tablename}
@@ -368,7 +373,7 @@ async function initializeCodeSystem(xmlData = CODE_SYSTEM) {
                 createdAt: now,
                 updatedAt: now
             };
-            await updateDetailCodeSystem(TABLE_HL7_CODESYSTEM_300, CodeSystemMappings[name].tags);
+            await updateDetailCodeSystem(TABLE_HL7_CODESYSTEM_300, CodeSystemMappings[name].tags, false);
             logger.info('Code system initialized successfully.');
 
         } else {
