@@ -8,21 +8,23 @@
 <odx-main-menu
   [title]="title"
   [subtitle]="subtitle"
-  [copyright]="copyright"
   [disabled]=false
-  [isOpen]=true
+  [isOpen]=false
 >
 </odx-main-menu>
 <main class="odx-app-main">
   <aside class="odx-app-sidebar">
     <odx-rail-navigation #railNavigation>
       <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/patient-query']">
+        <span class="custom-icon-wrapper"><img src="/patient-query.svg" alt="Patient Query" /></span>
         Patient Query
       </a>
       <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/config']">
+        <span class="custom-icon-wrapper"><img src="/config.svg" alt="Configuration" /></span>
         Configuration
       </a>
       <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/codesystem']">
+        <span class="custom-icon-wrapper"><img src="/code-system.svg" alt="Code System" /></span>
         Code System
       </a>
 

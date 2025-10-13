@@ -1,0 +1,20 @@
+/* Hide the default ODX icon inside rail items so we can use our own */
+::ng-deep a[odxRailNavigationItem] odx-icon {
+  display: none !important;
+}
+
+/* Layout the custom icon similarly to the default one */
+.custom-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+}
+
+.custom-icon-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

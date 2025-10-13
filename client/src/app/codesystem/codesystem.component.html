@@ -7,7 +7,7 @@
       <button odxButton [variant]="variantValue"
               (click)="getCodesystemDetial(codesystem.id, codesystem.codesystem_name)"
       >
-        {{ codesystem.codesystem_name }}
+        {{ getCodesystemDisplayName(codesystem.codesystem_name) }}
       </button>
     }
   </div>

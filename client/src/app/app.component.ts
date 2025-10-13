@@ -8,6 +8,7 @@ import {MainMenuModule} from '@odx/angular/components/main-menu';
 import {RailNavigationModule} from '@odx/angular/components/rail-navigation';
 
 
+// @ts-ignore
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -19,5 +20,4 @@ import {RailNavigationModule} from '@odx/angular/components/rail-navigation';
 export class AppComponent {
   title: string = 'HL7 Parsing Tool';
   subtitle: string = '1.0.1';
-  copyright = '© Drägerwerk AG & Co. KGaA 2025';
 }

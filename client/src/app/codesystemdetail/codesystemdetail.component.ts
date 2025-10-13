@@ -9,6 +9,7 @@ import {FormFieldModule} from '@odx/angular/components/form-field';
 import {ButtonVariant} from '@odx/angular/components/button';
 import {FormsModule} from '@angular/forms';
 import {debounceTime, Subject} from 'rxjs';
+import { getCodesystemDisplayName } from '../shared/codesystem-name.util';
 
 
 interface TableData {
@@ -60,13 +61,16 @@ export class CodesystemdetailComponent implements OnInit {
   public tablevariantValue = TableVariant.STRIPED;
   private descriptionInput$ = new Subject<{ tagkey: string, val: string }>();
 
+  // Expose shared helper for template usage
+  public getCodesystemDisplayName = getCodesystemDisplayName;
+
   constructor(
     private codesystemService: CodesystemService,
     private router: Router,
     private route: ActivatedRoute
   ) {
     this.descriptionInput$.pipe(
-      debounceTime(1000) 
+      debounceTime(1000)
     ).subscribe(({tagkey, val}) => {
       this.onEditDescription(tagkey, val);
     });

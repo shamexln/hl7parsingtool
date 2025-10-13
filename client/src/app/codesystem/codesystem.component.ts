@@ -4,6 +4,7 @@ import {CodesystemService} from '../codesystem.service';
 import {CodesystemMockService} from '../mock/codesystem-mock';
 import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {Router} from '@angular/router';
+import { getCodesystemDisplayName } from '../shared/codesystem-name.util';
 
 @Component({
   selector: 'app-codesystem',
@@ -18,6 +19,9 @@ export class CodesystemComponent implements OnInit {
 
   public variantValue = ButtonVariant.SECONDARY;
   public codesystems: any[] = [];
+
+  // Expose shared helper for template usage
+  public getCodesystemDisplayName = getCodesystemDisplayName;
 
   constructor(private codesystemService: CodesystemService, private router: Router
   ) {

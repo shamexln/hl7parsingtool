@@ -25,6 +25,6 @@ export const routes: Routes = [
     loadComponent: () => import('./codesystemdetail/codesystemdetail.component')
       .then(m => m.CodesystemdetailComponent)
   },
-  {path: '', redirectTo: '/patient-query', pathMatch: 'full'}
+  {path: '', redirectTo: 'patient-query', pathMatch: 'full'}
 
 ];

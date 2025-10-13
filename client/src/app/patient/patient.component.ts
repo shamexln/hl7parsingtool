@@ -10,7 +10,7 @@ import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {TableVariant} from '@odx/angular/components/table';
 import {DataTableModule} from '@odx/angular/components/data-table';
 import {PageChangeEvent, PaginatorModule} from '@odx/angular/components/paginator';
-import {FormFieldComponent, FormFieldVariant} from '@odx/angular/components/form-field';
+import {FormFieldComponent, FormFieldLabelDirective, FormFieldVariant} from '@odx/angular/components/form-field';
 import {DatepickerModule} from '@odx/angular/components/datepicker';
 import {SelectComponent, SelectModule, SelectOptionComponent} from '@odx/angular/components/select';
 import {Subscription} from 'rxjs';
@@ -71,7 +71,8 @@ interface OptionValue {
     SelectOptionComponent,
     SelectComponent,
     SelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormFieldLabelDirective
   ],
   templateUrl: './patient.component.html',
   styleUrls: ['./patient.component.css']
@@ -92,7 +93,7 @@ export class PatientComponent implements OnInit {
   totalPages = 0;
   totalItems = 0;
   previousPageIndex = 0; // 默认第一页索引通常为0
-  fieldstyle = FormFieldVariant.SIMPLE;
+  fieldstyle = FormFieldVariant.HORIZONTAL;
 
   formGroup = new FormGroup({
     patientid: new FormControl('', [Validators.required]),
