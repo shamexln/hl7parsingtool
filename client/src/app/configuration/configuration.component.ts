@@ -6,10 +6,12 @@ import { CardModule} from '@odx/angular/components/card';
 import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {ButtonComponent, ButtonVariant} from '@odx/angular/components/button';
 import { TranslateModule, TranslateService} from '@ngx-translate/core';
+import { SessionIdleService } from '../session-idle.service';
+import {SelectComponent, SelectOptionComponent} from '@odx/angular/components/select';
 @Component({
   selector: 'app-configuration',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, AreaHeaderComponent, ButtonComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, CardModule, AreaHeaderComponent, ButtonComponent, TranslateModule, SelectComponent, SelectOptionComponent],
   templateUrl: './configuration.component.html',
   styleUrl: './configuration.component.css'
 })
@@ -39,7 +41,13 @@ export class ConfigurationComponent implements OnInit {
   passwordErrorMessage: string = '';
   passwordSuccessMessage: string = '';
 
-  constructor(private http: HttpClient, private translate: TranslateService) {}
+  constructor(private http: HttpClient, private translate: TranslateService, private idle: SessionIdleService) {}
+
+  // Auto Log-off
+  autoLogoffSelect: 'Never' | 'Custom' = 'Never';
+  autoLogoffMinutes: number = 0;
+  autoLogoffMessage: string = '';
+  isAutoLogoffSaving: boolean = false;
 
   // Password cycle management
   selectedCycle: string = 'Never';
@@ -52,6 +60,8 @@ export class ConfigurationComponent implements OnInit {
     this.loadPortConfigurations();
     // Load current password cycle
     this.loadPasswordCycle();
+    // Load Auto Log-off setting from localStorage
+    this.loadAutoLogoff();
   }
 
   loadPortConfigurations(): void {
@@ -78,6 +88,56 @@ export class ConfigurationComponent implements OnInit {
         this.loadFromLocalStorage();
       }
     });
+  }
+
+  // Auto Log-off setting
+  loadAutoLogoff(): void {
+    try {
+      const minStr = localStorage.getItem('autoLogoffMinutes');
+      const n = minStr == null ? 0 : Number(minStr);
+      if (Number.isFinite(n) && n > 0) {
+        this.autoLogoffSelect = 'Custom';
+        this.autoLogoffMinutes = Math.floor(n);
+      } else {
+        this.autoLogoffSelect = 'Never';
+        this.autoLogoffMinutes = 0;
+      }
+      // Ensure service is in sync
+      this.idle.update(this.autoLogoffMinutes);
+    } catch {
+      this.autoLogoffSelect = 'Never';
+      this.autoLogoffMinutes = 0;
+      this.idle.update(0);
+    }
+  }
+
+  saveAutoLogoff(): void {
+    this.autoLogoffMessage = '';
+    this.isAutoLogoffSaving = true;
+    // Validate
+    let minutes = 0;
+    if (this.autoLogoffSelect === 'Custom') {
+      minutes = Number(this.autoLogoffMinutes);
+      if (!Number.isFinite(minutes) || minutes <= 0) {
+        this.isAutoLogoffSaving = false;
+        this.autoLogoffMessage = 'Please enter a valid positive number of minutes';
+        return;
+      }
+      minutes = Math.floor(minutes);
+    }
+    try {
+      localStorage.setItem('autoLogoffMinutes', String(minutes));
+    } catch {}
+    // Update idle service
+    this.idle.update(minutes);
+    this.isAutoLogoffSaving = false;
+    this.autoLogoffMessage = 'Saved';
+  }
+
+  onAutoLogoffSelectChange(): void {
+    if (this.autoLogoffSelect === 'Never') {
+      this.autoLogoffMinutes = 0;
+    }
   }
 
   loadFromLocalStorage(): void {

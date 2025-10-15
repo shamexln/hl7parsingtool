@@ -51,6 +51,42 @@
     <!-- Separator between cards -->
     <div class="card-separator"></div>
 
+    <!-- Auto Log-off Card (Right side style similar to previous) -->
+    <div class="config-card">
+      <div class="card-header">
+        <h3>Auto Log-off</h3>
+        <div class="card-actions" *ngIf="!isAutoLogoffSaving">
+          <button odxButton [variant]="variantValue" (click)="saveAutoLogoff()" [disabled]="isAutoLogoffSaving">
+            <span *ngIf="!isAutoLogoffSaving">{{ 'COMMON.SAVE' | translate }}</span>
+            <span *ngIf="isAutoLogoffSaving">{{ 'COMMON.SAVING' | translate }}</span>
+          </button>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="edit-mode">
+          <div class="config-item">
+            <!-- odx-label equivalent using form field label style -->
+            <label for="autoLogoffSelect">Auto Log-off</label>
+            <div style="display:flex; gap:12px; align-items:center;">
+              <odx-select name="autoLogoffSelect"
+                          id="autoLogoffSelect"
+                          (optionSelected)="onAutoLogoffSelectChange()"
+                          [(ngModel)]="autoLogoffSelect"
+                          style="width: 220px;">
+                <odx-select-option [value]="'Never'">Never</odx-select-option>
+                <odx-select-option [value]="'Custom'">Custom (minutes)</odx-select-option>
+              </odx-select>
+              <input type="number" min="1" step="1" style="width:120px;" [(ngModel)]="autoLogoffMinutes" [disabled]="autoLogoffSelect !== 'Custom'" placeholder="minutes"/>
+            </div>
+            <span class="hint" *ngIf="autoLogoffMessage" [style.color]="autoLogoffMessage==='Saved' ? 'green' : 'red'">{{ autoLogoffMessage }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Separator between cards -->
+    <div class="card-separator"></div>
+
     <div class="config-card">
       <div class="card-header">
         <h3>{{ 'CONFIG.HL7_RECEIVER.TITLE' | translate }}</h3>

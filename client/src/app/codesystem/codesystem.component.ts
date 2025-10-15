@@ -6,13 +6,17 @@ import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {Router} from '@angular/router';
 import { getCodesystemDisplayName } from '../shared/codesystem-name.util';
 import {TranslateModule} from '@ngx-translate/core';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-codesystem',
+  standalone: true,
   imports: [
     ButtonComponent,
     TranslateModule,
-    AreaHeaderComponent
+    AreaHeaderComponent,
+    // Needed for structural control flow (@for) and common directives
+    CommonModule
   ],
   templateUrl: './codesystem.component.html',
   styleUrl: './codesystem.component.css'

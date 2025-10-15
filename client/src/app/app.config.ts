@@ -7,6 +7,7 @@ import { provideMainMenuLinksConfig } from '@odx/angular/components/main-menu';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { authInterceptor } from './auth.interceptor';
+import { SessionIdleService } from './session-idle.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
@@ -24,6 +25,10 @@ export function translateInitializerFactory(translate: TranslateService) {
   };
 }
 
+export function idleInitializerFactory(idle: SessionIdleService) {
+  return () => idle.init();
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
@@ -33,6 +38,7 @@ export const appConfig: ApplicationConfig = {
       loader: { provide: TranslateLoader, useFactory: HttpLoaderFactory, deps: [HttpClient] }
     })),
     { provide: APP_INITIALIZER, useFactory: translateInitializerFactory, deps: [TranslateService], multi: true },
+    { provide: APP_INITIALIZER, useFactory: idleInitializerFactory, deps: [SessionIdleService], multi: true },
     // Hide default footer links in ODX main menu
     provideMainMenuLinksConfig({
       legalNoticeUrl: null,

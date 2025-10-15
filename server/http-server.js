@@ -26,6 +26,33 @@ function createHttpApp() {
     app.use(cors({ origin: true, credentials: true }));
     app.use(express.json());
 
+    // Global auth gate for all /api/* except /api/auth/*.
+    // This ensures any expired/missing access token results in 401,
+    // allowing the frontend interceptor to trigger refresh via refresh token.
+    const GLOBAL_AUTH_SECRET = (process.env.AUTH_SECRET || 'draeger-sdmi-monitor');
+    function isProtectedApi(pathname) {
+        return /^\/api\//.test(pathname) && !/^\/api\/auth\//.test(pathname);
+    }
+    app.use((req, res, next) => {
+        try {
+            // Always allow CORS preflight
+            if (req.method === 'OPTIONS') return next();
+            if (!isProtectedApi(req.path || req.url)) return next();
+            const authHeader = req.headers['authorization'] || '';
+            const m = authHeader.match(/^Bearer\s+(.+)$/i);
+            const token = m ? m[1] : null;
+            if (!token) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            try {
+                jwt.verify(token, GLOBAL_AUTH_SECRET);
+                return next();
+            } catch {
+                return res.status(401).json({ success: false, message: 'Unauthorized' });
+            }
+        } catch (e) {
+            return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+    });
+
     // Serve root path
     app.get("/", (req, res) => {
         res.sendFile(path.join(process.cwd(), "public", "browser", "index.html"));
@@ -264,9 +291,11 @@ function createHttpApp() {
     });
 
     // Auth helpers
-    const AUTH_SECRET = (process.env.AUTH_SECRET || 'dev-secret-change-me');
-    const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '15m';
+    const AUTH_SECRET = (process.env.AUTH_SECRET || 'draeger-sdmi-monitor');
+    const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '15m'; // 15 minutes
+    logger.info('ACCESS_TOKEN_EXPIRES_IN:', ACCESS_TOKEN_EXPIRES_IN);
     const AUTH_TOKEN_TTL_MS = Number(process.env.REFRESH_TOKEN_TTL_MS || (7 * 24 * 60 * 60 * 1000)); // refresh TTL
+    logger.info('AUTH_TOKEN_TTL_MS:', AUTH_TOKEN_TTL_MS);
     function getAesKey() {
         // Derive a 32-byte key from secret via sha256
         return crypto.createHash('sha256').update(String(AUTH_SECRET)).digest();
@@ -371,8 +400,21 @@ function createHttpApp() {
                     return res.status(500).json({ authenticated: false });
                 }
                 const now = Date.now();
-                if (!row || Number(row.expires_at) <= now) {
+                if (!row) {
+                    // Unknown refresh token
                     return res.json({ authenticated: false });
+                }
+                if (Number(row.expires_at) <= now) {
+                    // Refresh token expired — clean it up from DB to avoid accumulation, then report unauthenticated
+                    const wdb = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
+                    wdb.run('DELETE FROM auth_tokens WHERE token = ?', [refresh], (delErr) => {
+                        wdb.close();
+                        if (delErr) {
+                            logger.warn('Failed to delete expired refresh token:', delErr);
+                        }
+                        return res.json({ authenticated: false });
+                    });
+                    return; // ensure no further processing
                 }
                 // Issue a new access token and return it in body (no cookies)
                 const newAccess = jwt.sign({ sub: row.username }, AUTH_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });
