@@ -3,6 +3,8 @@ const cors = require("cors");
 const path = require("path");
 const fs = require('fs');
 const sqlite3 = require("sqlite3").verbose();
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 const logger = require("./logger");
 const {
     DATABASE_FILE, TABLE_HL7_PATIENTS, LISTCODESYSTEM_API, CODESYSTEMTAGS_API, TABLE_HL7_CODESYSTEMS
@@ -20,8 +22,8 @@ const {
 function createHttpApp() {
     const app = express();
 
-    // Enable CORS for frontend access
-    app.use(cors());
+    // Enable CORS for frontend access (allow credentials for cookie-based auth)
+    app.use(cors({ origin: true, credentials: true }));
     app.use(express.json());
 
     // Serve root path
@@ -95,8 +97,7 @@ function createHttpApp() {
         // Fetch data from database for patientId
         const fetchDataFromDB = (patientId, startTime, endTime) => {
             return new Promise((resolve, reject) => {
-                let query = `SELECT *
-                             FROM ${tableName}`;
+                let query = `SELECT *  FROM ${tableName}`;
                 let conditions = [];
                 let params = [];
 
@@ -262,6 +263,238 @@ function createHttpApp() {
         }
     });
 
+    // Auth helpers
+    const AUTH_SECRET = (process.env.AUTH_SECRET || 'dev-secret-change-me');
+    const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '15m';
+    const AUTH_TOKEN_TTL_MS = Number(process.env.REFRESH_TOKEN_TTL_MS || (7 * 24 * 60 * 60 * 1000)); // refresh TTL
+    function getAesKey() {
+        // Derive a 32-byte key from secret via sha256
+        return crypto.createHash('sha256').update(String(AUTH_SECRET)).digest();
+    }
+    function encryptText(plain) {
+        const key = getAesKey();
+        const iv = crypto.randomBytes(12); // GCM 12-byte IV
+        const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+        const enc = Buffer.concat([cipher.update(Buffer.from(String(plain), 'utf8')), cipher.final()]);
+        const tag = cipher.getAuthTag();
+        return { enc, iv, tag };
+    }
+    function decryptText(encBuf, ivBuf, tagBuf) {
+        const key = getAesKey();
+        const decipher = crypto.createDecipheriv('aes-256-gcm', key, ivBuf);
+        decipher.setAuthTag(tagBuf);
+        const dec = Buffer.concat([decipher.update(encBuf), decipher.final()]);
+        return dec.toString('utf8');
+    }
+
+    // API endpoint: User login (issue JWT access + refresh)
+    app.post('/api/auth/login', (req, res) => {
+        try {
+            const { username, password } = req.body || {};
+            if (!username || !password) {
+                return res.status(400).json({ success: false });
+            }
+
+            const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
+            db.get('SELECT username, password_enc, iv, tag FROM users WHERE username = ?', [username], (err, row) => {
+                if (err) {
+                    logger.error('DB error during login:', err);
+                    db.close();
+                    return res.status(500).json({ success: false });
+                }
+
+                if (!row) {
+                    // user not found
+                    db.close();
+                    return res.status(401).json({ success: false });
+                }
+
+                try {
+                    const storedPwd = decryptText(row.password_enc, row.iv, row.tag);
+                    if (storedPwd !== password) {
+                        db.close();
+                        return res.status(401).json({ success: false });
+                    }
+                } catch (e) {
+                    logger.error('Decrypt error during login:', e);
+                    db.close();
+                    return res.status(500).json({ success: false });
+                }
+
+                // Credentials OK: issue JWT access token and a stored refresh token
+                const accessToken = jwt.sign({ sub: username }, AUTH_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });
+                const refreshToken = crypto.randomBytes(32).toString('hex');
+                const expiresAt = Date.now() + AUTH_TOKEN_TTL_MS;
+                db.run('INSERT OR REPLACE INTO auth_tokens (token, username, expires_at) VALUES (?, ?, ?)', [refreshToken, username, expiresAt], (insErr) => {
+                    db.close();
+                    if (insErr) {
+                        logger.error('DB error saving refresh token:', insErr);
+                        return res.status(500).json({ success: false });
+                    }
+                    // Do not use cookies; return tokens in response body for client to store and send via headers
+                    return res.json({ success: true, token: accessToken, refreshToken });
+                });
+            });
+        } catch (error) {
+            logger.error(`Error during login: ${error.message}`);
+            return res.status(500).json({ success: false });
+        }
+    });
+
+    // API endpoint: Check current session (verify access JWT; refresh via refresh cookie if needed)
+    app.get('/api/auth/me', (req, res) => {
+        try {
+            // Expect Authorization: Bearer <accessJWT>
+            const authHeader = req.headers['authorization'] || '';
+            const m = authHeader.match(/^Bearer\s+(.+)$/i);
+            const access = m ? m[1] : null;
+            if (access) {
+                try {
+                    jwt.verify(access, AUTH_SECRET);
+                    return res.json({ authenticated: true });
+                } catch (e) {
+                    // fall through to refresh path on expiry or invalid
+                }
+            }
+
+            // Try refresh flow via custom header X-Refresh-Token
+            const refresh = req.headers['x-refresh-token'];
+            if (!refresh) {
+                return res.json({ authenticated: false });
+            }
+
+            const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READONLY);
+            db.get('SELECT username, expires_at FROM auth_tokens WHERE token = ?', [refresh], (err, row) => {
+                db.close();
+                if (err) {
+                    logger.error('DB error checking session:', err);
+                    return res.status(500).json({ authenticated: false });
+                }
+                const now = Date.now();
+                if (!row || Number(row.expires_at) <= now) {
+                    return res.json({ authenticated: false });
+                }
+                // Issue a new access token and return it in body (no cookies)
+                const newAccess = jwt.sign({ sub: row.username }, AUTH_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });
+                return res.json({ authenticated: true, token: newAccess });
+            });
+        } catch (error) {
+            logger.error(`Error checking session: ${error.message}`);
+            return res.status(500).json({ authenticated: false });
+        }
+    });
+
+    // API endpoint: Logout user (delete refresh token and clear cookies)
+    app.post('/api/auth/logout', (req, res) => {
+        try {
+            const refresh = req.headers['x-refresh-token'];
+            const endNoContent = () => res.status(204).end();
+            if (refresh) {
+                const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
+                db.run('DELETE FROM auth_tokens WHERE token = ?', [refresh], (err) => {
+                    db.close();
+                    if (err) {
+                        logger.error('DB error during logout:', err);
+                    }
+                    return endNoContent();
+                });
+            } else {
+                return endNoContent();
+            }
+        } catch (error) {
+            logger.error(`Error during logout: ${error.message}`);
+            return res.status(500).end();
+        }
+    });
+
+    // Check if initial setup is required
+    // Logic: first login if users table does not exist OR exists but has zero rows
+    app.get('/api/auth/setup-required', (req, res) => {
+        try {
+            const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READONLY);
+            // Step 1: check if users table exists
+            db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='users'", [], (tblErr, tblRow) => {
+                if (tblErr) {
+                    db.close();
+                    logger.error('DB error checking users table existence:', tblErr);
+                    return res.status(500).json({ setupRequired: false });
+                }
+                if (!tblRow) {
+                    // No users table -> first login required
+                    db.close();
+                    return res.json({ setupRequired: true });
+                }
+                // Step 2: users table exists, check if any user rows exist
+                db.get('SELECT COUNT(1) as cnt FROM users', [], (cntErr, cntRow) => {
+                    db.close();
+                    if (cntErr) {
+                        logger.error('DB error counting users:', cntErr);
+                        return res.status(500).json({ setupRequired: false });
+                    }
+                    const needSetup = !cntRow || Number(cntRow.cnt) === 0;
+                    return res.json({ setupRequired: needSetup });
+                });
+            });
+        } catch (error) {
+            logger.error(`Error checking setup-required: ${error.message}`);
+            return res.status(500).json({ setupRequired: false });
+        }
+    });
+
+    // Initialize first user (first-time setup)
+    // Frontend already confirmed password twice; backend stores without extra validation on first setup
+    app.post('/api/auth/setup-initial', (req, res) => {
+        try {
+            const { password, username } = req.body || {};
+            const targetUser = (username && String(username).trim()) || 'admin';
+            if (!password) {
+                return res.status(400).json({ success: false, message: 'Missing password' });
+            }
+
+            const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
+            // Ensure users table exists (in case database initializer didn't create it yet)
+            db.run(`CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password_enc BLOB NOT NULL,
+                iv BLOB NOT NULL,
+                tag BLOB NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`, [], (createErr) => {
+                if (createErr) {
+                    db.close();
+                    logger.error('DB error creating users table:', createErr);
+                    return res.status(500).json({ success: false });
+                }
+                // Allow setup only if no user exists yet
+                db.get('SELECT COUNT(1) as cnt FROM users', [], (selErr, row) => {
+                    if (selErr) {
+                        db.close();
+                        logger.error('DB error reading users:', selErr);
+                        return res.status(500).json({ success: false });
+                    }
+                    if (row && Number(row.cnt) > 0) {
+                        db.close();
+                        return res.status(409).json({ success: false, message: 'Already initialized' });
+                    }
+
+                    const { enc, iv, tag } = encryptText(password);
+                    db.run('INSERT INTO users (username, password_enc, iv, tag) VALUES (?, ?, ?, ?)', [targetUser, enc, iv, tag], (insErr) => {
+                        db.close();
+                        if (insErr) {
+                            logger.error('DB error inserting initial user:', insErr);
+                            return res.status(500).json({ success: false });
+                        }
+                        return res.json({ success: true });
+                    });
+                });
+            });
+        } catch (error) {
+            logger.error(`Error during setup-initial: ${error.message}`);
+            return res.status(500).json({ success: false });
+        }
+    });
+
 
     // API endpoint: List all codesystem names
     app.get(LISTCODESYSTEM_API, (req, res) => {
@@ -355,6 +588,193 @@ function createHttpApp() {
 
         res.json({success: true, updated: updateCount});
 
+    });
+
+    // Change password for authenticated user
+    app.post('/api/change-password', (req, res) => {
+        try {
+            const { oldPassword, newPassword } = req.body || {};
+            if (!oldPassword || !newPassword) {
+                return res.status(400).json({ success: false, message: 'Missing oldPassword or newPassword' });
+            }
+            if (String(newPassword).length < 8) {
+                return res.status(400).json({ success: false, message: 'New password must be at least 8 characters' });
+            }
+
+            // simple sequence checks
+            const isRepeatedChar = (s) => /^(.)\1+$/.test(s);
+            const isSequentialNumeric = (s) => {
+                if (!/^\d+$/.test(s)) return false;
+                let inc = true, dec = true;
+                for (let i = 1; i < s.length; i++) {
+                    const prev = s.charCodeAt(i-1) - 48;
+                    const cur = s.charCodeAt(i) - 48;
+                    if (cur !== prev + 1) inc = false;
+                    if (cur !== prev - 1) dec = false;
+                    if (!inc && !dec) return false;
+                }
+                return inc || dec;
+            };
+            const isObviousSequence = (s) => isRepeatedChar(s) || isSequentialNumeric(s);
+            if (isObviousSequence(String(newPassword))) {
+                return res.status(400).json({ success: false, message: 'New password is too simple (obvious sequence)' });
+            }
+
+            // Verify JWT from Authorization header
+            const authHeader = req.headers['authorization'] || '';
+            const m = authHeader.match(/^Bearer\s+(.+)$/i);
+            const token = m ? m[1] : null;
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'Unauthorized' });
+            }
+
+            let username;
+            try {
+                const payload = jwt.verify(token, AUTH_SECRET);
+                username = payload && payload.sub;
+            } catch (e) {
+                return res.status(401).json({ success: false, message: 'Unauthorized' });
+            }
+            if (!username) {
+                return res.status(401).json({ success: false, message: 'Unauthorized' });
+            }
+
+            const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
+            db.get('SELECT username, password_enc, iv, tag FROM users WHERE username = ?', [username], (err, row) => {
+                if (err) {
+                    db.close();
+                    logger.error('DB error during change-password:', err);
+                    return res.status(500).json({ success: false, message: 'Database error' });
+                }
+                if (!row) {
+                    db.close();
+                    return res.status(404).json({ success: false, message: 'User not found' });
+                }
+
+                try {
+                    const storedPwd = decryptText(row.password_enc, row.iv, row.tag);
+                    if (storedPwd !== oldPassword) {
+                        db.close();
+                        return res.status(400).json({ success: false, message: 'Old password is incorrect' });
+                    }
+                    if (storedPwd === String(newPassword)) {
+                        db.close();
+                        return res.status(400).json({ success: false, message: 'New password must differ from the previous one' });
+                    }
+                } catch (e) {
+                    db.close();
+                    logger.error('Decrypt error during change-password:', e);
+                    return res.status(500).json({ success: false, message: 'Internal error' });
+                }
+
+                const { enc, iv, tag } = encryptText(newPassword);
+                db.run('UPDATE users SET password_enc = ?, iv = ?, tag = ? WHERE username = ?', [enc, iv, tag, username], (updErr) => {
+                    db.close();
+                    if (updErr) {
+                        logger.error('DB error updating password:', updErr);
+                        return res.status(500).json({ success: false, message: 'Failed to update password' });
+                    }
+                    return res.json({ success: true });
+                });
+            });
+        } catch (error) {
+            logger.error(`Error changing password: ${error.message}`);
+            return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+    });
+
+    // Password cycle routes (per-user)
+    function ensurePasswordCycleColumn(callback) {
+        const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
+        db.all("PRAGMA table_info(users)", [], (err, rows) => {
+            if (err) {
+                logger.error('PRAGMA table_info(users) failed:', err);
+                db.close();
+                return callback(err);
+            }
+            const hasCol = Array.isArray(rows) && rows.some(r => r.name === 'password_cycle_days');
+            if (hasCol) {
+                db.close();
+                return callback(null);
+            }
+            db.run("ALTER TABLE users ADD COLUMN password_cycle_days INTEGER", [], (alterErr) => {
+                if (alterErr) {
+                    // If users table doesn't exist yet, ignore here (setup-initial will create). For other errors log.
+                    logger.warn('ALTER TABLE users ADD COLUMN password_cycle_days failed (may be fine if users not yet created):', alterErr.message || alterErr);
+                }
+                db.close();
+                return callback(null);
+            });
+        });
+    }
+
+    const CYCLE_MAP = { '1m': 30, '2m': 60, '6m': 180, '1y': 365 };
+    const CYCLE_KEYS = Object.keys(CYCLE_MAP);
+
+    app.get('/api/password-cycle', (req, res) => {
+        try {
+            // auth
+            const authHeader = req.headers['authorization'] || '';
+            const m = authHeader.match(/^Bearer\s+(.+)$/i);
+            const token = m ? m[1] : null;
+            if (!token) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            let username;
+            try { username = jwt.verify(token, AUTH_SECRET)?.sub; } catch { return res.status(401).json({ success: false, message: 'Unauthorized' }); }
+            if (!username) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            ensurePasswordCycleColumn((colErr) => {
+                if (colErr) return res.status(500).json({ success: false, message: 'Internal error' });
+                const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READONLY);
+                db.get('SELECT password_cycle_days FROM users WHERE username = ?', [username], (err, row) => {
+                    db.close();
+                    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+                    const days = row && row.password_cycle_days != null ? Number(row.password_cycle_days) : null;
+                    let cycle = null;
+                    if (days != null) {
+                        // reverse map
+                        cycle = CYCLE_KEYS.find(k => CYCLE_MAP[k] === days) || null;
+                    }
+                    return res.json({ success: true, cycle, days });
+                });
+            });
+        } catch (e) {
+            logger.error('Error getting password-cycle:', e);
+            return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+    });
+
+    app.post('/api/password-cycle', (req, res) => {
+        try {
+            const { cycle } = req.body || {};
+            if (!cycle || !CYCLE_KEYS.includes(String(cycle))) {
+                return res.status(400).json({ success: false, message: 'Invalid cycle. Allowed: 1m, 2m, 6m, 1y' });
+            }
+            // auth
+            const authHeader = req.headers['authorization'] || '';
+            const m = authHeader.match(/^Bearer\s+(.+)$/i);
+            const token = m ? m[1] : null;
+            if (!token) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            let username;
+            try { username = jwt.verify(token, AUTH_SECRET)?.sub; } catch { return res.status(401).json({ success: false, message: 'Unauthorized' }); }
+            if (!username) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            ensurePasswordCycleColumn((colErr) => {
+                if (colErr) return res.status(500).json({ success: false, message: 'Internal error' });
+                const days = CYCLE_MAP[cycle];
+                const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
+                db.run('UPDATE users SET password_cycle_days = ? WHERE username = ?', [days, username], (updErr) => {
+                    db.close();
+                    if (updErr) {
+                        logger.error('DB error updating password cycle:', updErr);
+                        return res.status(500).json({ success: false, message: 'Failed to update password cycle' });
+                    }
+                    return res.json({ success: true });
+                });
+            });
+        } catch (e) {
+            logger.error('Error setting password-cycle:', e);
+            return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
     });
 
     // Serve static files (UI)

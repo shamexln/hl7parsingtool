@@ -1,0 +1,10 @@
+.login-wrapper{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;background:#fff}
+.login-card{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;}
+.logo-box{width:96px;height:96px;border-radius:12px;background:#103a63;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:34px;letter-spacing:1px;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.login-form{width:100%;max-width:600px}
+.form-field{margin-bottom:12px}
+.form-field input{width:100%;height:48px;padding:0 16px;border:none;border-radius:10px;background:#e9f1ff;color:#0b2746;font-size:16px;box-shadow:inset 0 0 0 1px rgba(16,58,99,.08)}
+.form-field input:focus{outline:none;box-shadow:inset 0 0 0 2px #7aa7ff, 0 0 0 3px rgba(122,167,255,.15)}
+.login-button{width:100%;height:48px;background:#163b63;color:#fff;border:none;border-radius:10px;font-size:16px}
+.error{color:#d92d20;margin:12px 0 0;text-align:center}
+.logout-msg{margin-top:12px;color:#6b7280;text-align:center;font-size:12px}

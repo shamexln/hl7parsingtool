@@ -10,11 +10,12 @@ import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {TableVariant} from '@odx/angular/components/table';
 import {DataTableModule} from '@odx/angular/components/data-table';
 import {PageChangeEvent, PaginatorModule} from '@odx/angular/components/paginator';
-import {FormFieldComponent, FormFieldLabelDirective, FormFieldVariant} from '@odx/angular/components/form-field';
+import {FormFieldComponent, FormFieldVariant} from '@odx/angular/components/form-field';
 import {DatepickerModule} from '@odx/angular/components/datepicker';
 import {SelectComponent, SelectModule, SelectOptionComponent} from '@odx/angular/components/select';
 import {Subscription} from 'rxjs';
 import {CoreModule} from '@odx/angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface TableData {
   row_id: string;
@@ -72,7 +73,7 @@ interface OptionValue {
     SelectComponent,
     SelectModule,
     ReactiveFormsModule,
-    FormFieldLabelDirective
+    TranslateModule
   ],
   templateUrl: './patient.component.html',
   styleUrls: ['./patient.component.css']

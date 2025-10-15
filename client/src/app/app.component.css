@@ -3,6 +3,27 @@
   display: none !important;
 }
 
+/* Ensure header lays out children horizontally and lets the right action stick to the end */
+::ng-deep odx-header {
+  display: flex;
+  align-items: center;
+}
+
+/*
+.header-spacer {
+  flex: 1 1 auto;
+}
+*/
+
+/* Pin the Logout button to the very top-right of the app header */
+.logout-button {
+  margin-left: auto;
+  position: fixed;
+  top: 8px;
+  right: 16px;
+  z-index: 1000;
+}
+
 /* Layout the custom icon similarly to the default one */
 .custom-icon-wrapper {
   display: inline-flex;
@@ -18,3 +39,19 @@
   height: 100%;
   object-fit: contain;
 }
+
+/* User menu footer with Dräger logo on the left and logout arrow on the right */
+.menu-footer {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 8px 12px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  justify-content: center;
+}
+
+.menu-footer .draeger-logo {
+  height: 22px;
+  width: auto;
+}
+

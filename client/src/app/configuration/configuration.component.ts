@@ -5,10 +5,11 @@ import { HttpClient } from '@angular/common/http';
 import { CardModule} from '@odx/angular/components/card';
 import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {ButtonComponent, ButtonVariant} from '@odx/angular/components/button';
+import { TranslateModule, TranslateService} from '@ngx-translate/core';
 @Component({
   selector: 'app-configuration',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, AreaHeaderComponent, ButtonComponent],
+  imports: [CommonModule, FormsModule, CardModule, AreaHeaderComponent, ButtonComponent, TranslateModule],
   templateUrl: './configuration.component.html',
   styleUrl: './configuration.component.css'
 })
@@ -30,11 +31,27 @@ export class ConfigurationComponent implements OnInit {
   isHttpSaving: boolean = false;
   httpErrorMessage: string = '';
 
-  constructor(private http: HttpClient) {}
+  // Change Password
+  oldPassword: string = '';
+  newPassword: string = '';
+  confirmPassword: string = '';
+  isPasswordSaving: boolean = false;
+  passwordErrorMessage: string = '';
+  passwordSuccessMessage: string = '';
+
+  constructor(private http: HttpClient, private translate: TranslateService) {}
+
+  // Password cycle management
+  selectedCycle: string = 'Never';
+  isCycleSaving: boolean = false;
+  cycleErrorMessage: string = '';
+  cycleSuccessMessage: string = '';
 
   ngOnInit(): void {
     // Load saved port configurations from the server
     this.loadPortConfigurations();
+    // Load current password cycle
+    this.loadPasswordCycle();
   }
 
   loadPortConfigurations(): void {
@@ -92,7 +109,8 @@ export class ConfigurationComponent implements OnInit {
   savePortConfiguration(): void {
     // Validate port
     if (!this.port || isNaN(Number(this.port)) || Number(this.port) < 1 || Number(this.port) > 65535) {
-      this.errorMessage = 'Please enter a valid port number (1-65535)';
+      const msg = this.translate.instant('CONFIG.ERROR_INVALID_PORT');
+      this.errorMessage = msg && msg !== 'CONFIG.ERROR_INVALID_PORT' ? msg : 'Please enter a valid port number (1-65535)';
       return;
     }
 
@@ -112,13 +130,15 @@ export class ConfigurationComponent implements OnInit {
           this.isSaving = false;
           this.isEditing = false;
         } else {
-          this.errorMessage = response.message || 'Failed to update port configuration';
+          const msg = this.translate.instant('CONFIG.ERROR_UPDATE_PORT_FAILED');
+          this.errorMessage = response.message || (msg && msg !== 'CONFIG.ERROR_UPDATE_PORT_FAILED' ? msg : 'Failed to update port configuration');
           this.isSaving = false;
         }
       },
       error: (error) => {
         console.error('Error saving port configuration:', error);
-        this.errorMessage = error.error?.message || 'Failed to connect to server';
+        const msg = this.translate.instant('COMMON.ERROR_NETWORK');
+        this.errorMessage = error.error?.message || (msg && msg !== 'COMMON.ERROR_NETWORK' ? msg : 'Failed to connect to server');
         this.isSaving = false;
       }
     });
@@ -139,7 +159,8 @@ export class ConfigurationComponent implements OnInit {
   saveHttpPortConfiguration(): void {
     // Validate port
     if (!this.httpPort || isNaN(Number(this.httpPort)) || Number(this.httpPort) < 1 || Number(this.httpPort) > 65535) {
-      this.httpErrorMessage = 'Please enter a valid port number (1-65535)';
+      const msg = this.translate.instant('CONFIG.ERROR_INVALID_PORT');
+      this.httpErrorMessage = msg && msg !== 'CONFIG.ERROR_INVALID_PORT' ? msg : 'Please enter a valid port number (1-65535)';
       return;
     }
 
@@ -159,14 +180,120 @@ export class ConfigurationComponent implements OnInit {
           this.isHttpSaving = false;
           this.isHttpEditing = false;
         } else {
-          this.httpErrorMessage = response.message || 'Failed to update HTTP port configuration';
+          const msg = this.translate.instant('CONFIG.HTTP_ERROR_UPDATE_PORT_FAILED');
+          this.httpErrorMessage = response.message || (msg && msg !== 'CONFIG.HTTP_ERROR_UPDATE_PORT_FAILED' ? msg : 'Failed to update HTTP port configuration');
           this.isHttpSaving = false;
         }
       },
       error: (error) => {
         console.error('Error saving HTTP port configuration:', error);
-        this.httpErrorMessage = error.error?.message || 'Failed to connect to server';
+        const msg = this.translate.instant('COMMON.ERROR_NETWORK');
+        this.httpErrorMessage = error.error?.message || (msg && msg !== 'COMMON.ERROR_NETWORK' ? msg : 'Failed to connect to server');
         this.isHttpSaving = false;
+      }
+    });
+  }
+
+  loadPasswordCycle(): void {
+    // Fetch current cycle from server
+    this.http.get<any>('/api/password-cycle').subscribe({
+      next: (res) => {
+        if (res && res.success) {
+          if (res.cycle) {
+            this.selectedCycle = res.cycle;
+          }
+        }
+      },
+      error: () => {
+        // silently ignore; keep default
+      }
+    });
+  }
+
+  savePasswordCycle(): void {
+    this.cycleErrorMessage = '';
+    this.cycleSuccessMessage = '';
+    const allowed = ['Never', '1m','2m','6m','1y'];
+    if (!allowed.includes(this.selectedCycle)) {
+      const msg = this.translate.instant('PASSWORD.CYCLE.ERROR_INVALID');
+      this.cycleErrorMessage = msg && msg !== 'PASSWORD.CYCLE.ERROR_INVALID' ? msg : 'Invalid cycle';
+      return;
+    }
+    this.isCycleSaving = true;
+    this.http.post<any>('/api/password-cycle', { cycle: this.selectedCycle }).subscribe({
+      next: (res) => {
+        if (res && res.success) {
+          const ok = this.translate.instant('PASSWORD.CYCLE.SUCCESS_SAVED');
+          this.cycleSuccessMessage = ok && ok !== 'PASSWORD.CYCLE.SUCCESS_SAVED' ? ok : 'Password update cycle saved';
+        } else {
+          const msg = this.translate.instant('PASSWORD.CYCLE.ERROR_SAVE_FAILED');
+          this.cycleErrorMessage = res?.message || (msg && msg !== 'PASSWORD.CYCLE.ERROR_SAVE_FAILED' ? msg : 'Failed to save password update cycle');
+        }
+        this.isCycleSaving = false;
+      },
+      error: (err) => {
+        const msg = this.translate.instant('COMMON.ERROR_NETWORK');
+        this.cycleErrorMessage = err?.error?.message || (msg && msg !== 'COMMON.ERROR_NETWORK' ? msg : 'Failed to connect to server');
+        this.isCycleSaving = false;
+      }
+    });
+  }
+
+  // Change Password Methods
+  changePassword(): void {
+    this.passwordErrorMessage = '';
+    this.passwordSuccessMessage = '';
+
+    // Basic validation
+    if (!this.oldPassword || !this.newPassword || !this.confirmPassword) {
+      const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_INVALID');
+      this.passwordErrorMessage = msg && msg !== 'PASSWORD.CHANGE.ERROR_INVALID' ? msg : 'Please enter a valid password';
+      return;
+    }
+
+    if (this.newPassword.length < 8) {
+      const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_LENGTH');
+      this.passwordErrorMessage = msg && msg !== 'PASSWORD.CHANGE.ERROR_LENGTH' ? msg : 'New password must be at least 8 characters';
+      return;
+    }
+
+    if (this.newPassword === this.oldPassword) {
+      const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_SAME');
+      this.passwordErrorMessage = msg && msg !== 'PASSWORD.CHANGE.ERROR_SAME' ? msg : 'New password must differ from the previous one';
+      return;
+    }
+
+    if (this.newPassword !== this.confirmPassword) {
+      const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_MISMATCH');
+      this.passwordErrorMessage = msg && msg !== 'PASSWORD.CHANGE.ERROR_MISMATCH' ? msg : 'New password and confirm password do not match';
+      return;
+    }
+
+    this.isPasswordSaving = true;
+
+    this.http.post<any>('/api/change-password', {
+      oldPassword: this.oldPassword,
+      newPassword: this.newPassword
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          const ok = this.translate.instant('PASSWORD.CHANGE.SUCCESS');
+          this.passwordSuccessMessage = ok && ok !== 'PASSWORD.CHANGE.SUCCESS' ? ok : 'Password changed successfully';
+          // Clear fields
+          this.oldPassword = '';
+          this.newPassword = '';
+          this.confirmPassword = '';
+        } else {
+          const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_FAILED');
+          this.passwordErrorMessage = response.message || (msg && msg !== 'PASSWORD.CHANGE.ERROR_FAILED' ? msg : 'Failed to change password');
+        }
+        this.isPasswordSaving = false;
+      },
+      error: (error) => {
+        console.error('Error changing password:', error);
+        const msg = this.translate.instant('COMMON.ERROR_NETWORK');
+        this.passwordErrorMessage = error.error?.message || (msg && msg !== 'COMMON.ERROR_NETWORK' ? msg : 'Failed to connect to server');
+        this.isPasswordSaving = false;
       }
     });
   }

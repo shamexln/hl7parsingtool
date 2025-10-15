@@ -46,9 +46,11 @@ const helpFunctions = {
 
         const alarmType = this.getAlarmType(encode);
         if (alarmType === this.AlarmTypeEnum.LOW_ALARM) {
-            return Math.abs(lowLim - value);
+            const diff = Math.abs(lowLim - value);
+            return Number(diff.toFixed(1));
         } else if (alarmType === this.AlarmTypeEnum.HIGH_ALARM) {
-            return Math.abs(upperLim - value);
+            const diff = Math.abs(upperLim - value);
+            return Number(diff.toFixed(1));
         } else {
             return 'NA';
         }

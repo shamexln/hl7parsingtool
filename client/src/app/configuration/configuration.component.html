@@ -1,47 +1,47 @@
 <div class="network-config">
   <div class="config-section">
     <odx-area-header size="large">
-      Network Configuration
+      {{ 'CONFIG.NETWORK_CONFIGURATION' | translate }}
     </odx-area-header>
     <!-- HTTP RESTFUL Server Configuration -->
     <div class="config-card">
       <div class="card-header">
-        <h3>HL7 Parsing Tool Server</h3>
+        <h3>{{ 'CONFIG.HTTP_SERVER.TITLE' | translate }}</h3>
         <div class="card-actions" *ngIf="!isHttpEditing">
-          <button odxButton [variant]="variantValue" (click)="startHttpEditing()">Edit</button>
+          <button odxButton [variant]="variantValue" (click)="startHttpEditing()">{{ 'COMMON.EDIT' | translate }}</button>
         </div>
       </div>
       <div class="card-content">
         <div *ngIf="!isHttpEditing" class="view-mode">
           <div class="config-item">
-            <span class="label">Server Address:</span>
+            <span class="label">{{ 'COMMON.SERVER_ADDRESS' | translate }}:</span>
             <span class="value">localhost</span>
           </div>
           <div class="config-item">
-            <span class="label">Port:</span>
+            <span class="label">{{ 'COMMON.PORT' | translate }}:</span>
             <span class="value">{{ savedHttpPort }}</span>
           </div>
           <div class="config-item">
-            <span class="label">Status:</span>
-            <span class="value status-ok">Connected</span>
+            <span class="label">{{ 'COMMON.STATUS' | translate }}:</span>
+            <span class="value status-ok">{{ 'COMMON.CONNECTED' | translate }}</span>
           </div>
         </div>
         <div *ngIf="isHttpEditing" class="edit-mode">
           <div class="config-item">
-            <label for="httpServerAddress">Server Address:</label>
+            <label for="httpServerAddress">{{ 'COMMON.SERVER_ADDRESS' | translate }}:</label>
             <input type="text" id="httpServerAddress" value="localhost" disabled>
-            <span class="hint">Server address cannot be changed</span>
+            <span class="hint">{{ 'CONFIG.SERVER_ADDRESS_HINT' | translate }}</span>
           </div>
           <div class="config-item">
-            <label for="httpPort">Port:</label>
-            <input type="text" id="httpPort" [(ngModel)]="httpPort" placeholder="Enter port number">
+            <label for="httpPort">{{ 'COMMON.PORT' | translate }}:</label>
+            <input type="text" id="httpPort" [(ngModel)]="httpPort" [attr.placeholder]="('COMMON.ENTER_PORT' | translate)">
             <span class="hint" *ngIf="httpErrorMessage" style="color: red;">{{ httpErrorMessage }}</span>
           </div>
           <div class="button-group">
-            <button class="cancel-button" (click)="cancelHttpEditing()" [disabled]="isHttpSaving">Cancel</button>
+            <button class="cancel-button" (click)="cancelHttpEditing()" [disabled]="isHttpSaving">{{ 'COMMON.CANCEL' | translate }}</button>
             <button class="save-button" (click)="saveHttpPortConfiguration()" [disabled]="isHttpSaving">
-              <span *ngIf="!isHttpSaving">Save</span>
-              <span *ngIf="isHttpSaving">Saving...</span>
+              <span *ngIf="!isHttpSaving">{{ 'COMMON.SAVE' | translate }}</span>
+              <span *ngIf="isHttpSaving">{{ 'COMMON.SAVING' | translate }}</span>
             </button>
           </div>
         </div>
@@ -53,50 +53,119 @@
 
     <div class="config-card">
       <div class="card-header">
-        <h3>HL7 Receiver</h3>
+        <h3>{{ 'CONFIG.HL7_RECEIVER.TITLE' | translate }}</h3>
         <div class="card-actions" *ngIf="!isEditing">
-          <button odxButton [variant]="variantValue" (click)="startEditing()">Edit</button>
+          <button odxButton [variant]="variantValue" (click)="startEditing()">{{ 'COMMON.EDIT' | translate }}</button>
         </div>
       </div>
       <div class="card-content">
         <div *ngIf="!isEditing" class="view-mode">
           <div class="config-item">
-            <span class="label">Server Address:</span>
+            <span class="label">{{ 'COMMON.SERVER_ADDRESS' | translate }}:</span>
             <span class="value">localhost</span>
           </div>
           <div class="config-item">
-            <span class="label">Port:</span>
+            <span class="label">{{ 'COMMON.PORT' | translate }}:</span>
             <span class="value">{{ savedPort }}</span>
           </div>
           <div class="config-item">
-            <span class="label">Status:</span>
-            <span class="value status-ok">Connected</span>
+            <span class="label">{{ 'COMMON.STATUS' | translate }}:</span>
+            <span class="value status-ok">{{ 'COMMON.CONNECTED' | translate }}</span>
           </div>
         </div>
         <div *ngIf="isEditing" class="edit-mode">
           <div class="config-item">
-            <label for="serverAddress">Server Address:</label>
+            <label for="serverAddress">{{ 'COMMON.SERVER_ADDRESS' | translate }}:</label>
             <input type="text" id="serverAddress" value="localhost" disabled>
-            <span class="hint">Server address cannot be changed</span>
+            <span class="hint">{{ 'CONFIG.SERVER_ADDRESS_HINT' | translate }}</span>
           </div>
           <div class="config-item">
-            <label for="port">Port:</label>
-            <input type="text" id="port" [(ngModel)]="port" placeholder="Enter port number">
+            <label for="port">{{ 'COMMON.PORT' | translate }}:</label>
+            <input type="text" id="port" [(ngModel)]="port" [attr.placeholder]="('COMMON.ENTER_PORT' | translate)">
             <span class="hint" *ngIf="errorMessage" style="color: red;">{{ errorMessage }}</span>
           </div>
           <div class="button-group">
-            <button class="cancel-button" (click)="cancelEditing()" [disabled]="isSaving">Cancel</button>
+            <button class="cancel-button" (click)="cancelEditing()" [disabled]="isSaving">{{ 'COMMON.CANCEL' | translate }}</button>
             <button class="save-button" (click)="savePortConfiguration()" [disabled]="isSaving">
-              <span *ngIf="!isSaving">Save</span>
-              <span *ngIf="isSaving">Saving...</span>
+              <span *ngIf="!isSaving">{{ 'COMMON.SAVE' | translate }}</span>
+              <span *ngIf="isSaving">{{ 'COMMON.SAVING' | translate }}</span>
             </button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Separator between cards -->
+    <div class="card-separator"></div>
 
+    <!-- Password Management Section -->
+    <odx-area-header size="large">
+      {{ 'PASSWORD.MANAGEMENT' | translate }}
+    </odx-area-header>
 
+    <!-- Password Update Cycle Card -->
+    <div class="config-card">
+      <div class="card-header">
+        <h3>{{ 'PASSWORD.CYCLE.TITLE' | translate }}</h3>
+        <div class="card-actions" *ngIf="!isCycleSaving">
+          <button odxButton [variant]="variantValue" (click)="savePasswordCycle()" [disabled]="isCycleSaving">
+            <span *ngIf="!isCycleSaving">{{ 'COMMON.CONFIRM' | translate }}</span>
+            <span *ngIf="isCycleSaving">{{ 'COMMON.SAVING' | translate }}</span>
+          </button>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="edit-mode">
+          <div class="config-item">
+            <label for="passwordCycle">{{ 'PASSWORD.CYCLE.SELECT_LABEL' | translate }}</label>
+            <select id="passwordCycle" [(ngModel)]="selectedCycle">
+              <option value="Never">{{ 'PASSWORD.CYCLE.OPTIONS.NEVER' | translate }}</option>
+              <option value="1m">{{ 'PASSWORD.CYCLE.OPTIONS.1M' | translate }}</option>
+              <option value="2m">{{ 'PASSWORD.CYCLE.OPTIONS.2M' | translate }}</option>
+              <option value="6m">{{ 'PASSWORD.CYCLE.OPTIONS.6M' | translate }}</option>
+              <option value="1y">{{ 'PASSWORD.CYCLE.OPTIONS.1Y' | translate }}</option>
+            </select>
+          </div>
+          <div class="config-item">
+            <span class="hint" *ngIf="cycleErrorMessage" style="color: red;">{{ cycleErrorMessage }}</span>
+            <span class="hint" *ngIf="cycleSuccessMessage" style="color: green;">{{ cycleSuccessMessage }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Password Card -->
+    <div class="config-card">
+      <div class="card-header">
+        <h3>{{ 'PASSWORD.CHANGE.TITLE' | translate }}</h3>
+        <div class="card-actions" *ngIf="!isPasswordSaving">
+          <button odxButton [variant]="variantValue" (click)="changePassword()" [disabled]="isPasswordSaving">
+            <span *ngIf="!isPasswordSaving">{{ 'COMMON.CONFIRM' | translate }}</span>
+            <span *ngIf="isPasswordSaving">{{ 'COMMON.SUBMITTING' | translate }}</span>
+          </button>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="edit-mode">
+          <div class="config-item">
+            <label for="oldPassword">{{ 'PASSWORD.CHANGE.CURRENT_LABEL' | translate }}</label>
+            <input type="password" id="oldPassword" [(ngModel)]="oldPassword" [attr.placeholder]="('PASSWORD.CHANGE.CURRENT_PLACEHOLDER' | translate)">
+          </div>
+          <div class="config-item">
+            <label for="newPassword">{{ 'PASSWORD.CHANGE.NEW_LABEL' | translate }}</label>
+            <input type="password" id="newPassword" [(ngModel)]="newPassword" [attr.placeholder]="('PASSWORD.CHANGE.NEW_PLACEHOLDER' | translate)">
+          </div>
+          <div class="config-item">
+            <label for="confirmPassword">{{ 'PASSWORD.CHANGE.CONFIRM_LABEL' | translate }}</label>
+            <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" [attr.placeholder]="('PASSWORD.CHANGE.CONFIRM_PLACEHOLDER' | translate)">
+          </div>
+          <div class="config-item">
+            <span class="hint" *ngIf="passwordErrorMessage" style="color: red;">{{ passwordErrorMessage }}</span>
+            <span class="hint" *ngIf="passwordSuccessMessage" style="color: green;">{{ passwordSuccessMessage }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </div>

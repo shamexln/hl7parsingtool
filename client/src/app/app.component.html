@@ -1,37 +1,63 @@
 <!--<h1>HL7 Parse Tool</h1>-->
 
-<odx-header>
-  <button odxButton odxMainMenuButton>
-    <odx-icon name="menu"/>
-  </button>
-</odx-header>
-<odx-main-menu
-  [title]="title"
-  [subtitle]="subtitle"
-  [disabled]=false
-  [isOpen]=false
->
-</odx-main-menu>
-<main class="odx-app-main">
-  <aside class="odx-app-sidebar">
-    <odx-rail-navigation #railNavigation>
-      <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/patient-query']">
-        <span class="custom-icon-wrapper"><img src="/patient-query.svg" alt="Patient Query" /></span>
-        Patient Query
-      </a>
-      <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/config']">
-        <span class="custom-icon-wrapper"><img src="/config.svg" alt="Configuration" /></span>
-        Configuration
-      </a>
-      <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/codesystem']">
-        <span class="custom-icon-wrapper"><img src="/code-system.svg" alt="Code System" /></span>
-        Code System
-      </a>
+<ng-container *ngIf="(isLoggedIn$ | async); else loginOnly">
+  <odx-header>
+    <button odxButton odxMainMenuButton>
+      <odx-icon name="menu"/>
+    </button>
+    <button odxButton odxHeaderAvatar [odxMenu]="userMenu">
+      <odx-avatar>
+        <img src="/user-logout.svg"/>
+      </odx-avatar>
+    </button>
+    <ng-template #userMenu>
+      <odx-menu>
+        <button odxButton odxMenuItem disabled style="justify-content:flex-start;gap:12px;">
+          <odx-avatar>
+            <span>A</span>
+          </odx-avatar>
+          <div style="display:flex;flex-direction:column;text-align:left;line-height:1.2;">
+            <span style="font-size:14px;color:var(--odx-color-text-default,inherit)">admin</span>
+          </div>
+        </button>
+        <button odxButton odxMenuItem class="menu-footer" (click)="logout()" aria-label="Logout">
+          <img class="draeger-logo" src="/draeger-logo.svg" alt="Dräger" />
+          <odx-icon name="arrow-right" style="margin-left: auto;"></odx-icon>
+        </button>
+      </odx-menu>
+    </ng-template>
+  </odx-header>
+  <odx-main-menu
+    [title]="('APP.TITLE' | translate)"
+    [subtitle]="('APP.SUBTITLE' | translate)"
+    [disabled]="false"
+    [isOpen]="false"
+  >
+  </odx-main-menu>
+  <main class="odx-app-main">
+    <aside class="odx-app-sidebar">
+      <odx-rail-navigation #railNavigation>
+        <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/patient-query']">
+          <span class="custom-icon-wrapper"><img src="/patient-query.svg" [attr.alt]="('APP.NAV.PATIENT_QUERY' | translate)" /></span>
+          {{ 'APP.NAV.PATIENT_QUERY' | translate }}
+        </a>
+        <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/config']">
+          <span class="custom-icon-wrapper"><img src="/config.svg" [attr.alt]="('APP.NAV.CONFIGURATION' | translate)" /></span>
+          {{ 'APP.NAV.CONFIGURATION' | translate }}
+        </a>
+        <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/codesystem']">
+          <span class="custom-icon-wrapper"><img src="/code-system.svg" [attr.alt]="('APP.NAV.CODE_SYSTEM' | translate)" /></span>
+          {{ 'APP.NAV.CODE_SYSTEM' | translate }}
+        </a>
 
-    </odx-rail-navigation>
-  </aside>
+      </odx-rail-navigation>
+    </aside>
+    <router-outlet></router-outlet>
+  </main>
+</ng-container>
+<ng-template #loginOnly>
   <router-outlet></router-outlet>
-</main>
+</ng-template>
 
 
 

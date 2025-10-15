@@ -5,11 +5,13 @@ import {CodesystemMockService} from '../mock/codesystem-mock';
 import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {Router} from '@angular/router';
 import { getCodesystemDisplayName } from '../shared/codesystem-name.util';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-codesystem',
   imports: [
     ButtonComponent,
+    TranslateModule,
     AreaHeaderComponent
   ],
   templateUrl: './codesystem.component.html',

@@ -21,6 +21,8 @@
     "@odx/angular": "^12.7.0",
     "@odx/icons": "^3.59.0",
     "@odx/ui": "^5.0.9",
+    "@ngx-translate/core": "^16.0.4",
+    "@ngx-translate/http-loader": "^8.0.0",
     "file-saver": "^2.0.5",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

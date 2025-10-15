@@ -1,0 +1,150 @@
+{
+  "APP": {
+    "TITLE": "HL7-Parsing-Tool",
+    "SUBTITLE": "1.0.1",
+    "LOGOUT": "Abmelden",
+    "NAV": {
+      "PATIENT_QUERY": "Patientenabfrage",
+      "CONFIGURATION": "Konfiguration",
+      "CODE_SYSTEM": "Codesystem"
+    }
+  },
+  "LOGIN": {
+    "USERNAME_PLACEHOLDER": "Benutzername eingeben",
+    "PASSWORD_PLACEHOLDER": "Passwort eingeben",
+    "SUBMIT": "Anmelden",
+    "ERROR_INVALID": "Bitte geben Sie einen gültigen Benutzernamen und ein gültiges Passwort ein",
+    "LOGGED_OUT": "Sie wurden abgemeldet.",
+    "LANGUAGE": {
+      "LABEL": "Sprache",
+      "EN": "Englisch",
+      "FR": "Französisch",
+      "DE": "Deutsch",
+      "ES": "Spanisch"
+    }
+  ,
+    "CONFIRM_PASSWORD_PLACEHOLDER": "Passwort bestätigen"
+  },
+  "PATIENT": {
+    "HEADER": "Abfrage von Patienteninformationen",
+    "INPUT": {
+      "PATIENT_ID_PLACEHOLDER": "Patienten-ID eingeben"
+    },
+    "DATE": {
+      "FROM_LABEL": "Von",
+      "TO_LABEL": "Bis",
+      "START_PLACEHOLDER": "Startdatum",
+      "END_PLACEHOLDER": "Enddatum"
+    },
+    "ACTIONS": {
+      "SEARCH": "Patienten-ID suchen",
+      "EXPORT_ALL": "Alle nach Excel exportieren"
+    },
+    "TABLE": {
+      "DEVICE_ID": "Monitor-GUID",
+      "LOCAL_TIME": "Ortszeit",
+      "DATE": "Datum",
+      "TIME": "Uhrzeit",
+      "HOUR": "Stunde",
+      "BED_LABEL": "Bettbezeichnung",
+      "PATIENT_ID": "Patienten-ID",
+      "MON_UNIT": "Überwachungseinheit",
+      "CARE_UNIT": "Pflegeeinheit",
+      "ALARM_GRADE": "Alarmstufe",
+      "ALARM_STATE": "Alarmstatus",
+      "ALARM_GRADE_2": "Alarmstufe 2",
+      "ALARM_MESSAGE": "Alarmmeldung",
+      "PARAM_ID": "Parameter-ID",
+      "PARAM_VALUE": "Parameterwert",
+      "PARAM_UOM": "Einheit",
+      "PARAM_UPPER_LIM": "Oberer Grenzwert",
+      "PARAM_LOWER_LIM": "Unterer Grenzwert",
+      "LIMIT_VIOLATION_TYPE": "Grenzverletzungstyp",
+      "LIMIT_VIOLATION_VALUE": "Grenzverletzungswert",
+      "ALARM_SOURCE": "Alarmquelle",
+      "ONSET_TICK": "Start-Tick",
+      "ALARM_DURATION": "Alarmdauer",
+      "CHANGE_TIME_UTC": "Änderungszeit (UTC)",
+      "CHANGE_TICK": "Änderungs-Tick",
+      "ABORTED": "Abgebrochen",
+      "EMPTY": "Nicht gefunden"
+    }
+  },
+  "CONFIG": {
+    "NETWORK_CONFIGURATION": "Netzwerkkonfiguration",
+    "HTTP_SERVER": {
+      "TITLE": "HL7-Parsing-Tool-Server"
+    },
+    "HL7_RECEIVER": {
+      "TITLE": "HL7_RECEIVER"
+    },
+    "ERROR_INVALID_PORT": "Bitte geben Sie eine gültige Portnummer ein (1-65535)",
+    "ERROR_UPDATE_PORT_FAILED": "Aktualisierung der Portkonfiguration fehlgeschlagen",
+    "HTTP_ERROR_UPDATE_PORT_FAILED": "Aktualisierung der HTTP-Portkonfiguration fehlgeschlagen"
+  },
+  "COMMON": {
+    "SERVER_ADDRESS": "Serveradresse",
+    "PORT": "Port",
+    "STATUS": "Status",
+    "SERVER_ADDRESS_HINT": "Serveradresse kann nicht geändert werden",
+    "ENTER_PORT": "Portnummer eingeben",
+    "EDIT": "Bearbeiten",
+    "CANCEL": "Abbrechen",
+    "CONNECTED": "Verbunden",
+    "SAVE": "Speichern",
+    "SAVING": "Speichern...",
+    "CONFIRM": "Bestätigen",
+    "SUBMITTING": "Wird gesendet...",
+    "ERROR_NETWORK": "Verbindung zum Server fehlgeschlagen"
+  },
+  "PASSWORD": {
+    "MANAGEMENT": "Passwortverwaltung",
+    "CYCLE": {
+      "TITLE": "Passwortzyklus",
+      "SELECT_LABEL": "Zeitraum",
+      "OPTIONS": {
+        "NEVER": "Nie",
+        "1M": " 1 Monat",
+        "2M": " 2 Monate",
+        "6M": " 6 Monate",
+        "1Y": " 1 Jahr"
+      },
+      "ERROR_INVALID": "Ungültiger Zyklus",
+      "SUCCESS_SAVED": "Passwort-Aktualisierungszyklus gespeichert",
+      "ERROR_SAVE_FAILED": "Speichern des Passwort-Aktualisierungszyklus fehlgeschlagen"
+    },
+    "CHANGE": {
+      "TITLE": "Passwort ändern",
+      "CURRENT_LABEL": "Aktuelles Passwort",
+      "NEW_LABEL": "Neues Passwort",
+      "CONFIRM_LABEL": "Passwort bestätigen",
+      "CURRENT_PLACEHOLDER": "Aktuelles Passwort eingeben",
+      "NEW_PLACEHOLDER": "Neues Passwort eingeben",
+      "CONFIRM_PLACEHOLDER": "Neues Passwort bestätigen",
+      "ERROR_INVALID": "Bitte geben Sie ein gültiges Passwort ein",
+      "ERROR_MISMATCH": "Neues Passwort und Bestätigung stimmen nicht überein",
+      "ERROR_LENGTH": "Das neue Passwort muss mindestens 8 Zeichen lang sein",
+      "ERROR_SAME": "Das neue Passwort muss sich vom vorherigen unterscheiden",
+      "SUCCESS": "Passwort erfolgreich geändert",
+      "ERROR_FAILED": "Ändern des Passworts fehlgeschlagen"
+    }
+  },
+  "CODESYSTEM": {
+    "HEADER": "Codesystem",
+    "DETAIL": {
+      "TABLE": {
+        "ROW_INDEX": "Zeilenindex",
+        "OBSERVATION_TYPE": "Beobachtungstyp",
+        "DATA_TYPE": "Datentyp",
+        "ENCODE": "Kodierung",
+        "PARAMETER_LABEL": "Parameterbezeichnung",
+        "ENCODE_SYSTEM": "Kodiersystem",
+        "SUB_ID": "Unter-ID",
+        "DESCRIPTION": "Beschreibung",
+        "SOURCE": "Quelle",
+        "CHANNEL": "Kanal",
+        "CHANNEL_ID": "Kanal-ID"
+      }
+    }
+  }
+}

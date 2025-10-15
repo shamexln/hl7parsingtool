@@ -1,6 +1,6 @@
 <div class="odx-app-page patient-page">
   <odx-area-header size="large">
-    Patient Information Query
+    {{ 'PATIENT.HEADER' | translate }}
   </odx-area-header>
 
   <div class="odx-app-page__content-scroll">
@@ -12,19 +12,19 @@
           <input
             type="text"
             formControlName="patientid"
-            [attr.placeholder]=" 'Input PatientID' "
+            [attr.placeholder]="('PATIENT.INPUT.PATIENT_ID_PLACEHOLDER' | translate)"
             odxFormFieldControl
             required (keyup.enter)="queryPatient(1)"
           />
         </odx-form-field>
 
         <odx-form-field
-          label="From"
+          [label]="('PATIENT.DATE.FROM_LABEL' | translate)"
           [variant]="fieldstyle"
         >
           <odx-datepicker
             formControlName="startdate"
-            [attr.placeholder]="'Start Date'"
+            [attr.placeholder]="('PATIENT.DATE.START_PLACEHOLDER' | translate)"
             odxFormFieldControl
           >
             <input odxDatepickerControl/>
@@ -32,22 +32,22 @@
         </odx-form-field>
 
         <odx-form-field
-          label="To"
+          [label]="('PATIENT.DATE.TO_LABEL' | translate)"
           [variant]="fieldstyle"
         >
           <odx-datepicker
             formControlName="enddate"
-            [attr.placeholder]=" 'End Date' "
+            [attr.placeholder]="('PATIENT.DATE.END_PLACEHOLDER' | translate)"
             odxFormFieldControl
           >
             <input odxDatepickerControl/>
           </odx-datepicker>
         </odx-form-field>
 
-        <button odxButton (click)="queryPatient(1)">Search Patient ID</button>
+        <button odxButton (click)="queryPatient(1)">{{ 'PATIENT.ACTIONS.SEARCH' | translate }}</button>
 
         <button odxButton (click)="exportAllDataToExcel()" [disabled]="!patientData() || patientData().length === 0">
-          export all to Excel
+          {{ 'PATIENT.ACTIONS.EXPORT_ALL' | translate }}
         </button>
 
         <odx-form-field
@@ -76,137 +76,137 @@
                [displayedColumns]="displayedColumns">
 
           <ng-container odxColumnDef="device_id">
-            <th odxHeaderCell *odxHeaderCellDef>Monitor GUID</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.DEVICE_ID' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.device_id }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="local_time">
-            <th odxHeaderCell *odxHeaderCellDef>Local Time</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.LOCAL_TIME' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.local_time }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="Date">
-            <th odxHeaderCell *odxHeaderCellDef>Date</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.DATE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.Date }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="Time">
-            <th odxHeaderCell *odxHeaderCellDef>Time</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.TIME' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.Time }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="Hour">
-            <th odxHeaderCell *odxHeaderCellDef>Hour</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.HOUR' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.Hour }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="bed_label">
-            <th odxHeaderCell *odxHeaderCellDef>Bed Label</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.BED_LABEL' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.bed_label }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="pat_ID">
-            <th odxHeaderCell *odxHeaderCellDef>Patient ID</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.PATIENT_ID' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.pat_ID }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="mon_unit">
-            <th odxHeaderCell *odxHeaderCellDef>Monitoring Unit</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.MON_UNIT' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.mon_unit }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="care_unit">
-            <th odxHeaderCell *odxHeaderCellDef>Care Unit</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.CARE_UNIT' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.care_unit }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="alarm_grade">
-            <th odxHeaderCell *odxHeaderCellDef>Alarm Grade</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.ALARM_GRADE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.alarm_grade }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="alarm_state">
-            <th odxHeaderCell *odxHeaderCellDef>Alarm State</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.ALARM_STATE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.alarm_state }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="Alarm Grade 2">
-            <th odxHeaderCell *odxHeaderCellDef>Alarm Grade 2</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.ALARM_GRADE_2' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element['Alarm Grade 2'] }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="alarm_message">
-            <th odxHeaderCell *odxHeaderCellDef>Alarm Message</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.ALARM_MESSAGE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.alarm_message }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="param_id">
-            <th odxHeaderCell *odxHeaderCellDef>Param ID</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.PARAM_ID' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.param_id }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="param_value">
-            <th odxHeaderCell *odxHeaderCellDef>Param Value</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.PARAM_VALUE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.param_value }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="param_uom">
-            <th odxHeaderCell *odxHeaderCellDef>Param UOM</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.PARAM_UOM' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.param_uom }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="param_upper_lim">
-            <th odxHeaderCell *odxHeaderCellDef>Param Upper Limit</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.PARAM_UPPER_LIM' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.param_upper_lim }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="param_lower_lim">
-            <th odxHeaderCell *odxHeaderCellDef>Param Lower Limit</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.PARAM_LOWER_LIM' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.param_lower_lim }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="Limit_Violation_Type">
-            <th odxHeaderCell *odxHeaderCellDef>Limit Violation Type</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.LIMIT_VIOLATION_TYPE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.Limit_Violation_Type }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="Limit_Violation_Value">
-            <th odxHeaderCell *odxHeaderCellDef>Limit Violation Value</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.LIMIT_VIOLATION_VALUE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.Limit_Violation_Value }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="sourcechannel">
-            <th odxHeaderCell *odxHeaderCellDef>Alarm Source</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.ALARM_SOURCE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.sourcechannel }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="onset_tick">
-            <th odxHeaderCell *odxHeaderCellDef>Onset Tick</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.ONSET_TICK' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.onset_tick }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="alarm_duration">
-            <th odxHeaderCell *odxHeaderCellDef>Alarm Duration</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.ALARM_DURATION' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.alarm_duration }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="change_time(UTC)">
-            <th odxHeaderCell *odxHeaderCellDef>Change Time (UTC)</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.CHANGE_TIME_UTC' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element['change_time(UTC)'] }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="change_tick">
-            <th odxHeaderCell *odxHeaderCellDef>Change Tick</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.CHANGE_TICK' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.change_tick }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="aborted">
-            <th odxHeaderCell *odxHeaderCellDef>Aborted</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'PATIENT.TABLE.ABORTED' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.aborted }}</td>
           </ng-container>
 
           <!-- 无数据的展示 -->
-          <odx-table-empty>Not Found</odx-table-empty>
+          <odx-table-empty>{{ 'PATIENT.TABLE.EMPTY' | translate }}</odx-table-empty>
 
         </table>
 

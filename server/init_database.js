@@ -94,6 +94,17 @@ async function initializeDatabase() {
             )
         `);
         logger.info(`Table "${TABLE_HL7_CODESYSTEM_300}" created or already exists.`);
+
+        // Create auth_tokens table for persistent session tokens
+        await dbRun(`
+            CREATE TABLE IF NOT EXISTS auth_tokens (
+                token TEXT PRIMARY KEY,
+                username TEXT NOT NULL,
+                expires_at INTEGER NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        logger.info(`Table "auth_tokens" created or already exists.`);
     } catch (err) {
         logger.error('Error creating tables:', err);
         throw err; // Rethrow to allow caller to handle the error

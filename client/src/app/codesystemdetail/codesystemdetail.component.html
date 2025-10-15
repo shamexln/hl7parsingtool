@@ -10,23 +10,23 @@
                [displayedColumns]="displayedColumns">
 
           <ng-container odxColumnDef="row_id">
-            <th odxHeaderCell *odxHeaderCellDef>Row Index</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.ROW_INDEX' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.row_id }}</td>
           </ng-container>
 
 
           <ng-container odxColumnDef="observationtype">
-            <th odxHeaderCell *odxHeaderCellDef>Observation Type</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.OBSERVATION_TYPE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.observationtype }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="datatype">
-            <th odxHeaderCell *odxHeaderCellDef>Data Type</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.DATA_TYPE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.datatype }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="encode">
-            <th odxHeaderCell *odxHeaderCellDef>Encode</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.ENCODE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.encode }}</td>
             <!--<th odxHeaderCell *odxHeaderCellDef>
               <odx-form-field>
@@ -40,17 +40,17 @@
           </ng-container>
 
           <ng-container odxColumnDef="parameterlabel">
-            <th odxHeaderCell *odxHeaderCellDef>Parameter Label</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.PARAMETER_LABEL' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.parameterlabel }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="encodesystem">
-            <th odxHeaderCell *odxHeaderCellDef>Encode System</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.ENCODE_SYSTEM' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.encodesystem }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="subid">
-            <th odxHeaderCell *odxHeaderCellDef>Sub Id</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.SUB_ID' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.subid }}</td>
           </ng-container>
 
@@ -58,7 +58,7 @@
 
             <th odxHeaderCell *odxHeaderCellDef>
               <odx-form-field>
-                <input #filter placeholder="Description" (input)="filterText.set(filter.value)" type="text"
+                <input #filter [attr.placeholder]="('CODESYSTEM.DETAIL.TABLE.DESCRIPTION' | translate)" (input)="filterText.set(filter.value)" type="text"
                        odxFormFieldControl/>
               </odx-form-field>
             </th>
@@ -70,23 +70,23 @@
           </ng-container>
 
           <ng-container odxColumnDef="source">
-            <th odxHeaderCell *odxHeaderCellDef>Source</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.SOURCE' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.source }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="channel">
-            <th odxHeaderCell *odxHeaderCellDef>Channel</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.CHANNEL' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.channel }}</td>
           </ng-container>
 
           <ng-container odxColumnDef="channelid">
-            <th odxHeaderCell *odxHeaderCellDef>Channel Id</th>
+            <th odxHeaderCell *odxHeaderCellDef>{{ 'CODESYSTEM.DETAIL.TABLE.CHANNEL_ID' | translate }}</th>
             <td odxCell *odxCellDef="let element">{{ element.channelid }}</td>
           </ng-container>
 
 
           <!-- 无数据的展示 -->
-          <odx-table-empty>Not Found</odx-table-empty>
+          <odx-table-empty>{{ 'COMMON.NOT_FOUND' | translate }}</odx-table-empty>
 
         </table>
       </div>

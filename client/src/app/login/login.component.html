@@ -1,0 +1,30 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="logo-box" aria-hidden="true">
+      <span>HL7</span>
+    </div>
+    <form (ngSubmit)="submit()" #f="ngForm" class="login-form">
+      <div class="form-field">
+        <label for="language" class="lang-label">{{ 'LOGIN.LANGUAGE.LABEL' | translate }}</label>
+        <select id="language" name="language" [(ngModel)]="selectedLang" (change)="setLang(selectedLang)">
+          <option value="en">{{ 'LOGIN.LANGUAGE.EN' | translate }}</option>
+          <option value="fr">{{ 'LOGIN.LANGUAGE.FR' | translate }}</option>
+          <option value="de">{{ 'LOGIN.LANGUAGE.DE' | translate }}</option>
+          <option value="es">{{ 'LOGIN.LANGUAGE.ES' | translate }}</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <input id="username" name="username" type="text" [(ngModel)]="username" [placeholder]="('LOGIN.USERNAME_PLACEHOLDER' | translate)" required />
+      </div>
+      <div class="form-field">
+        <input id="password" name="password" type="password" [(ngModel)]="password" [placeholder]="('LOGIN.PASSWORD_PLACEHOLDER' | translate)" required />
+      </div>
+      <div class="form-field" *ngIf="isFirstLogin">
+        <input id="confirmPassword" name="confirmPassword" type="password" [(ngModel)]="confirmPassword" [placeholder]="('LOGIN.CONFIRM_PASSWORD_PLACEHOLDER' | translate)" required />
+      </div>
+      <button odxButton class="login-button" type="submit" [disabled]="loading">{{ 'LOGIN.SUBMIT' | translate }}</button>
+      <div class="error" *ngIf="error">{{ error }}</div>
+      <div class="logout-msg" *ngIf="!error">{{ 'LOGIN.LOGGED_OUT' | translate }}</div>
+    </form>
+  </div>
+</div>

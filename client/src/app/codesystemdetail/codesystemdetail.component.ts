@@ -10,7 +10,7 @@ import {ButtonVariant} from '@odx/angular/components/button';
 import {FormsModule} from '@angular/forms';
 import {debounceTime, Subject} from 'rxjs';
 import { getCodesystemDisplayName } from '../shared/codesystem-name.util';
-
+import { TranslateModule } from '@ngx-translate/core';
 
 interface TableData {
   row_id: string;
@@ -35,6 +35,7 @@ interface TableData {
     DataTableModule,
     FormFieldModule,
     FormsModule,
+    TranslateModule
   ],
   templateUrl: './codesystemdetail.component.html',
   standalone: true,
