@@ -1,8 +1,8 @@
 import {Routes} from '@angular/router';
-import {PatientComponent} from './patient/patient.component';
+/*import {PatientComponent} from './patient/patient.component';
 import {ConfigurationComponent} from './configuration/configuration.component';
 import {CodesystemComponent} from './codesystem/codesystem.component';
-import {CodesystemdetailComponent} from './codesystemdetail/codesystemdetail.component';
+import {CodesystemdetailComponent} from './codesystemdetail/codesystemdetail.component';*/
 import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
@@ -22,6 +22,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./configuration/configuration.component')
       .then(m => m.ConfigurationComponent)
+  },
+  {
+    path: 'management',
+    canActivate: [authGuard],
+    loadComponent: () => import('./management/management.component')
+      .then(m => m.ManagementComponent)
   },
   {
     path: 'codesystem',

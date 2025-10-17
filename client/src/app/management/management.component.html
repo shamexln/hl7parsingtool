@@ -1,0 +1,115 @@
+<div class="network-config">
+  <div class="config-section">
+    <odx-area-header size="large">
+      {{ 'APP.NAV.MANAGEMENT' | translate }}
+    </odx-area-header>
+
+    <div class="config-grid">
+      <!-- Left column: Auto Log-off -->
+      <div class="column">
+        <div class="config-card">
+          <div class="card-header">
+            <h3>{{ 'MANAGEMENT.AUTO_LOGOFF.TITLE' | translate }}</h3>
+            <div class="card-actions" *ngIf="!isAutoLogoffSaving">
+              <button odxButton [variant]="variantValue" (click)="saveAutoLogoff()" [disabled]="isAutoLogoffSaving">
+                <span *ngIf="!isAutoLogoffSaving">{{ 'COMMON.SAVE' | translate }}</span>
+                <span *ngIf="isAutoLogoffSaving">{{ 'COMMON.SAVING' | translate }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="edit-mode">
+              <div class="config-item">
+                <label for="autoLogoffSelect">{{ 'MANAGEMENT.AUTO_LOGOFF.SELECT_LABEL' | translate }}</label>
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <odx-select name="autoLogoffSelect"
+                              id="autoLogoffSelect"
+                              (optionSelected)="onAutoLogoffSelectChange()"
+                              [(ngModel)]="autoLogoffSelect"
+                              style="width: 220px;">
+                    <odx-select-option [value]="'Never'">{{ 'MANAGEMENT.AUTO_LOGOFF.OPTIONS.NEVER' | translate }}</odx-select-option>
+                    <odx-select-option [value]="'Custom'">{{ 'MANAGEMENT.AUTO_LOGOFF.OPTIONS.CUSTOM' | translate }}</odx-select-option>
+                  </odx-select>
+                  <input type="number" min="1" step="1" style="width:120px;" [(ngModel)]="autoLogoffMinutes" [disabled]="autoLogoffSelect !== 'Custom'" [attr.placeholder]="('MANAGEMENT.AUTO_LOGOFF.MINUTES_PLACEHOLDER' | translate)"/>
+                </div>
+                <span class="hint" *ngIf="autoLogoffMessage" [style.color]="autoLogoffMessage===('MANAGEMENT.AUTO_LOGOFF.SAVED' | translate) ? 'green' : 'red'">{{ autoLogoffMessage }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Cycle column -->
+      <div class="column">
+
+        <!-- Password Update Cycle Card -->
+        <div class="config-card">
+          <div class="card-header">
+            <h3>{{ 'PASSWORD.CYCLE.TITLE' | translate }}</h3>
+            <div class="card-actions" *ngIf="!isCycleSaving">
+              <button odxButton [variant]="variantValue" (click)="savePasswordCycle()" [disabled]="isCycleSaving">
+                <span *ngIf="!isCycleSaving">{{ 'COMMON.CONFIRM' | translate }}</span>
+                <span *ngIf="isCycleSaving">{{ 'COMMON.SAVING' | translate }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="edit-mode">
+              <div class="config-item">
+                <label for="passwordCycle">{{ 'PASSWORD.CYCLE.SELECT_LABEL' | translate }}</label>
+                <select id="passwordCycle" [(ngModel)]="selectedCycle">
+                  <option value="-1">{{ 'PASSWORD.CYCLE.OPTIONS.NEVER' | translate }}</option>
+                  <option value="1m">{{ 'PASSWORD.CYCLE.OPTIONS.1M' | translate }}</option>
+                  <option value="2m">{{ 'PASSWORD.CYCLE.OPTIONS.2M' | translate }}</option>
+                  <option value="6m">{{ 'PASSWORD.CYCLE.OPTIONS.6M' | translate }}</option>
+                  <option value="1y">{{ 'PASSWORD.CYCLE.OPTIONS.1Y' | translate }}</option>
+                </select>
+              </div>
+              <div class="config-item">
+                <span class="hint" *ngIf="cycleErrorMessage" style="color: red;">{{ cycleErrorMessage }}</span>
+                <span class="hint" *ngIf="cycleSuccessMessage" style="color: green;">{{ cycleSuccessMessage }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Password column -->
+      <div class="column">
+        <!-- Change Password Card -->
+        <div class="config-card">
+          <div class="card-header">
+            <h3>{{ 'PASSWORD.CHANGE.TITLE' | translate }}</h3>
+            <div class="card-actions" *ngIf="!isPasswordSaving">
+              <button odxButton [variant]="variantValue" (click)="changePassword()" [disabled]="isPasswordSaving">
+                <span *ngIf="!isPasswordSaving">{{ 'COMMON.CONFIRM' | translate }}</span>
+                <span *ngIf="isPasswordSaving">{{ 'COMMON.SUBMITTING' | translate }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="edit-mode">
+              <div class="config-item">
+                <label for="oldPassword">{{ 'PASSWORD.CHANGE.CURRENT_LABEL' | translate }}</label>
+                <input type="password" id="oldPassword" [(ngModel)]="oldPassword" [attr.placeholder]="('PASSWORD.CHANGE.CURRENT_PLACEHOLDER' | translate)">
+              </div>
+              <div class="config-item">
+                <label for="newPassword">{{ 'PASSWORD.CHANGE.NEW_LABEL' | translate }}</label>
+                <input type="password" id="newPassword" [(ngModel)]="newPassword" [attr.placeholder]="('PASSWORD.CHANGE.NEW_PLACEHOLDER' | translate)">
+              </div>
+              <div class="config-item">
+                <label for="confirmPassword">{{ 'PASSWORD.CHANGE.CONFIRM_LABEL' | translate }}</label>
+                <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" [attr.placeholder]="('PASSWORD.CHANGE.CONFIRM_PLACEHOLDER' | translate)">
+              </div>
+              <div class="config-item">
+                <span class="hint" *ngIf="passwordErrorMessage" style="color: red;">{{ passwordErrorMessage }}</span>
+                <span class="hint" *ngIf="passwordSuccessMessage" style="color: green;">{{ passwordSuccessMessage }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

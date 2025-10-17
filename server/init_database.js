@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const { TABLE_HL7_PATIENTS, DATABASE_FILE, TABLE_HL7_CODESYSTEMS, TABLE_HL7_CODESYSTEM_300} = require('./config');
+const { SQLITE_INTEGER_MAX } = require('./constants');
 const winston = require('winston');
 
 // 日志配置示例（仅供参考，你项目中可能已有此配置）
@@ -94,6 +95,55 @@ async function initializeDatabase() {
             )
         `);
         logger.info(`Table "${TABLE_HL7_CODESYSTEM_300}" created or already exists.`);
+
+        // Create users table for user management (with UID and password cycle)
+        // SQLITE_INTEGER_MAX max vaue of INTEGER
+        await dbRun(`CREATE TABLE IF NOT EXISTS users (
+                                                          id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                          username TEXT UNIQUE NOT NULL,
+                                                          uid TEXT UNIQUE,
+                                                          password_enc BLOB NOT NULL,
+                                                          iv BLOB NOT NULL,
+                                                          tag BLOB NOT NULL,
+                                                          password_cycle_days TEXT DEFAULT ${SQLITE_INTEGER_MAX},
+                                                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                     )`);
+        logger.info(`Table "users" created or already exists.`);
+
+        // Ensure new columns exist for legacy databases
+        await new Promise((resolve) => {
+            db.all("PRAGMA table_info(users)", [], async (perr, rows) => {
+                if (perr) {
+                    logger.warn('PRAGMA table_info(users) failed:', perr);
+                    return resolve();
+                }
+                try {
+                    const names = Array.isArray(rows) ? rows.map(r => r.name) : [];
+                    if (!names.includes('uid')) {
+                        await dbRun("ALTER TABLE users ADD COLUMN uid TEXT UNIQUE");
+                        logger.info('Added missing column users.uid');
+                    }
+                    if (!names.includes('password_cycle_days')) {
+                        await dbRun("ALTER TABLE users ADD COLUMN password_cycle_days TEXT DEFAULT '-1'");
+                        logger.info('Added missing column users.password_cycle_days');
+                    }
+                } catch (e) {
+                    logger.warn('Altering users table failed (may be fine if schema already up-to-date):', e.message || e);
+                }
+                resolve();
+            });
+        });
+
+        // Create password history table (store encrypted passwords per user UID)
+        await dbRun(`CREATE TABLE IF NOT EXISTS password (
+                          id INTEGER PRIMARY KEY AUTOINCREMENT,
+                          uid TEXT NOT NULL,
+                          password_enc BLOB NOT NULL,
+                          iv BLOB NOT NULL,
+                          tag BLOB NOT NULL,
+                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                      )`);
+        logger.info(`Table "password" created or already exists.`);
 
         // Create auth_tokens table for persistent session tokens
         await dbRun(`

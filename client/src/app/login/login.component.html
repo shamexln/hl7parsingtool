@@ -1,27 +1,42 @@
 <div class="login-wrapper">
+  <!-- Top-right language icon and dropdown -->
+  <div class="login-lang-container">
+    <button type="button" class="lang-icon-btn" (click)="toggleLangSelect(); $event.stopPropagation()" aria-haspopup="true" [attr.aria-expanded]="showLangSelect ? 'true' : 'false'" aria-label="Change language">
+      <!-- Icon only -->
+      <odx-icon name="language" size="medium" class="lang-icon"></odx-icon>
+    </button>
+    <div class="lang-panel" *ngIf="showLangSelect" (click)="$event.stopPropagation()">
+      <ul class="lang-list" role="menu">
+        <li *ngFor="let l of languages" role="menuitem">
+          <button type="button"
+                  class="lang-item"
+                  [class.selected]="selectedLang === l.code"
+                  (click)="setLang(l.code)"
+                  (keydown.enter)="setLang(l.code)"
+                  (keydown.space)="setLang(l.code)"
+                  tabindex="0">
+            <span class="lang-text">{{ l.labelKey | translate }}</span>
+            <span class="checkmark" *ngIf="selectedLang === l.code">✓</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
   <div class="login-card">
     <div class="logo-box" aria-hidden="true">
       <span>HL7</span>
     </div>
     <form (ngSubmit)="submit()" #f="ngForm" class="login-form">
-      <div class="form-field">
-        <label for="language" class="lang-label">{{ 'LOGIN.LANGUAGE.LABEL' | translate }}</label>
-        <select id="language" name="language" [(ngModel)]="selectedLang" (change)="setLang(selectedLang)">
-          <option value="en">{{ 'LOGIN.LANGUAGE.EN' | translate }}</option>
-          <option value="fr">{{ 'LOGIN.LANGUAGE.FR' | translate }}</option>
-          <option value="de">{{ 'LOGIN.LANGUAGE.DE' | translate }}</option>
-          <option value="es">{{ 'LOGIN.LANGUAGE.ES' | translate }}</option>
-        </select>
-      </div>
-      <div class="form-field">
-        <input id="username" name="username" type="text" [(ngModel)]="username" [placeholder]="('LOGIN.USERNAME_PLACEHOLDER' | translate)" required />
-      </div>
-      <div class="form-field">
+      <odx-form-field [readonly]="true" [disabled]="true">
+        <input id="username" name="username" type="text" [(ngModel)]="username" [placeholder]="('LOGIN.USERNAME_PLACEHOLDER' | translate)" [readonly]="true" [disabled]="true" required />
+      </odx-form-field>
+      <odx-form-field>
         <input id="password" name="password" type="password" [(ngModel)]="password" [placeholder]="('LOGIN.PASSWORD_PLACEHOLDER' | translate)" required />
-      </div>
-      <div class="form-field" *ngIf="isFirstLogin">
+      </odx-form-field>
+      <odx-form-field *ngIf="isFirstLogin">
         <input id="confirmPassword" name="confirmPassword" type="password" [(ngModel)]="confirmPassword" [placeholder]="('LOGIN.CONFIRM_PASSWORD_PLACEHOLDER' | translate)" required />
-      </div>
+      </odx-form-field>
       <button odxButton class="login-button" type="submit" [disabled]="loading">{{ 'LOGIN.SUBMIT' | translate }}</button>
       <div class="error" *ngIf="error">{{ error }}</div>
       <div class="logout-msg" *ngIf="!error">{{ 'LOGIN.LOGGED_OUT' | translate }}</div>

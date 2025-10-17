@@ -4,9 +4,10 @@
     "SUBTITLE": "1.0.1",
     "LOGOUT": "Abmelden",
     "NAV": {
-      "PATIENT_QUERY": "Patientenabfrage",
+      "PATIENT_QUERY": "Abfrage",
       "CONFIGURATION": "Konfiguration",
-      "CODE_SYSTEM": "Codesystem"
+      "CODE_SYSTEM": "Kodierung",
+      "MANAGEMENT": "Verwaltung"
     }
   },
   "LOGIN": {
@@ -15,6 +16,9 @@
     "SUBMIT": "Anmelden",
     "ERROR_INVALID": "Bitte geben Sie einen gültigen Benutzernamen und ein gültiges Passwort ein",
     "LOGGED_OUT": "Sie wurden abgemeldet.",
+    "ERROR_PASSWORD_MISMATCH": "Die Passwörter stimmen nicht überein.",
+    "ERROR_SETUP_FAILED": "Initiale Einrichtung fehlgeschlagen.",
+    "ERROR_PASSWORD_EXPIRED": "Passwort abgelaufen, bitte aktualisieren und ändern Sie Ihr Passwort.",
     "LANGUAGE": {
       "LABEL": "Sprache",
       "EN": "Englisch",
@@ -76,7 +80,7 @@
       "TITLE": "HL7-Parsing-Tool-Server"
     },
     "HL7_RECEIVER": {
-      "TITLE": "HL7_RECEIVER"
+      "TITLE": "HL7-Empfänger"
     },
     "ERROR_INVALID_PORT": "Bitte geben Sie eine gültige Portnummer ein (1-65535)",
     "ERROR_UPDATE_PORT_FAILED": "Aktualisierung der Portkonfiguration fehlgeschlagen",
@@ -145,6 +149,19 @@
         "CHANNEL": "Kanal",
         "CHANNEL_ID": "Kanal-ID"
       }
+    }
+  },
+  "MANAGEMENT": {
+    "AUTO_LOGOFF": {
+      "TITLE": "Automatische Abmeldung",
+      "SELECT_LABEL": "Automatische Abmeldung",
+      "OPTIONS": {
+        "NEVER": "Nie",
+        "CUSTOM": "Benutzerdefiniert (Minuten)"
+      },
+      "MINUTES_PLACEHOLDER": "Minuten",
+      "SAVED": "Gespeichert",
+      "ERROR_INVALID_MINUTES": "Bitte geben Sie eine gültige positive Minutenanzahl ein"
     }
   }
 }

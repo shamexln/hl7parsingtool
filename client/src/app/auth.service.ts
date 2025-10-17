@@ -9,6 +9,7 @@ interface LoginRes {
 }
 interface SetupRequiredRes {
   setupRequired: boolean;
+  status?: string;
 }
 interface SetupInitialRes {
   success: boolean;
@@ -43,10 +44,9 @@ export class AuthService {
   }
 
   // 首次登录检查：后端返回是否需要初始化
-  setupRequired(): Observable<boolean> {
+  setupRequired(): Observable<SetupRequiredRes> {
     return this.http.get<SetupRequiredRes>('/api/auth/setup-required').pipe(
-      map(res => !!res?.setupRequired),
-      catchError(() => of(false))
+      catchError(() => of({ setupRequired: false, status: 'error' }))
     );
   }
 

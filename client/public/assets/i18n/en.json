@@ -4,17 +4,21 @@
     "SUBTITLE": "1.0.1",
     "LOGOUT": "Log out",
     "NAV": {
-      "PATIENT_QUERY": "Patient Query",
+      "PATIENT_QUERY": "Query",
       "CONFIGURATION": "Configuration",
-      "CODE_SYSTEM": "Code System"
+      "CODE_SYSTEM": "Encoding",
+      "MANAGEMENT": "Management"
     }
   },
   "LOGIN": {
     "USERNAME_PLACEHOLDER": "Enter username",
     "PASSWORD_PLACEHOLDER": "Enter password",
     "SUBMIT": "Log in",
-    "ERROR_INVALID": "Please enter a valid username and password",
+    "ERROR_INVALID": "Please enter a valid username and password.",
     "LOGGED_OUT": "You have been logged out.",
+    "ERROR_PASSWORD_MISMATCH": "Passwords do not match.",
+    "ERROR_SETUP_FAILED": "Initial setup failed.",
+    "ERROR_PASSWORD_EXPIRED": "Password expired, please refresh and change your password.",
     "LANGUAGE": {
       "LABEL": "Language",
       "EN": "English",
@@ -145,6 +149,19 @@
         "CHANNEL": "Channel",
         "CHANNEL_ID": "Channel Id"
       }
+    }
+  },
+  "MANAGEMENT": {
+    "AUTO_LOGOFF": {
+      "TITLE": "Auto Log-off",
+      "SELECT_LABEL": "Auto Log-off",
+      "OPTIONS": {
+        "NEVER": "Never",
+        "CUSTOM": "Custom (minutes)"
+      },
+      "MINUTES_PLACEHOLDER": "minutes",
+      "SAVED": "Saved",
+      "ERROR_INVALID_MINUTES": "Please enter a valid positive number of minutes"
     }
   }
 }

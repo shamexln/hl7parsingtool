@@ -4,9 +4,10 @@
     "SUBTITLE": "1.0.1",
     "LOGOUT": "Se déconnecter",
     "NAV": {
-      "PATIENT_QUERY": "Recherche de patient",
+      "PATIENT_QUERY": "Requête",
       "CONFIGURATION": "Configuration",
-      "CODE_SYSTEM": "Système de codes"
+      "CODE_SYSTEM": "Codage",
+      "MANAGEMENT": "Gestion"
     }
   },
   "LOGIN": {
@@ -15,6 +16,9 @@
     "SUBMIT": "Se connecter",
     "ERROR_INVALID": "Veuillez entrer un nom d'utilisateur et un mot de passe valides",
     "LOGGED_OUT": "Vous avez été déconnecté.",
+    "ERROR_PASSWORD_MISMATCH": "Les mots de passe ne correspondent pas.",
+    "ERROR_SETUP_FAILED": "La configuration initiale a échoué.",
+    "ERROR_PASSWORD_EXPIRED": "Mot de passe expiré, veuillez actualiser et changer votre mot de passe.",
     "LANGUAGE": {
       "LABEL": "Langue",
       "EN": "Anglais",
@@ -76,7 +80,7 @@
       "TITLE": "Serveur de l'outil HL7"
     },
     "HL7_RECEIVER": {
-      "TITLE": "HL7_RECEIVER"
+      "TITLE": "Récepteur HL7"
     },
     "ERROR_INVALID_PORT": "Veuillez entrer un numéro de port valide (1-65535)",
     "ERROR_UPDATE_PORT_FAILED": "Échec de la mise à jour de la configuration du port",
@@ -145,6 +149,19 @@
         "CHANNEL": "Canal",
         "CHANNEL_ID": "ID de canal"
       }
+    }
+  },
+  "MANAGEMENT": {
+    "AUTO_LOGOFF": {
+      "TITLE": "Déconnexion automatique",
+      "SELECT_LABEL": "Déconnexion automatique",
+      "OPTIONS": {
+        "NEVER": "Jamais",
+        "CUSTOM": "Personnalisé (minutes)"
+      },
+      "MINUTES_PLACEHOLDER": "minutes",
+      "SAVED": "Enregistré",
+      "ERROR_INVALID_MINUTES": "Veuillez entrer un nombre de minutes positif valide"
     }
   }
 }

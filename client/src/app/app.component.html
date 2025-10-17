@@ -5,7 +5,12 @@
     <button odxButton odxMainMenuButton>
       <odx-icon name="menu"/>
     </button>
-    <button odxButton odxHeaderAvatar [odxMenu]="userMenu">
+    <button odxButton odxHeaderAvatar (click)="logout()">
+      <odx-avatar>
+        <img src="/user-logout.svg"/>
+      </odx-avatar>
+    </button>
+<!--    <button odxButton odxHeaderAvatar [odxMenu]="userMenu">
       <odx-avatar>
         <img src="/user-logout.svg"/>
       </odx-avatar>
@@ -17,7 +22,7 @@
             <span>A</span>
           </odx-avatar>
           <div style="display:flex;flex-direction:column;text-align:left;line-height:1.2;">
-            <span style="font-size:14px;color:var(--odx-color-text-default,inherit)">admin</span>
+            <span style="font-size:14px;color:var(&#45;&#45;odx-color-text-default,inherit)">admin</span>
           </div>
         </button>
         <button odxButton odxMenuItem class="menu-footer" (click)="logout()" aria-label="Logout">
@@ -25,11 +30,12 @@
           <odx-icon name="arrow-right" style="margin-left: auto;"></odx-icon>
         </button>
       </odx-menu>
-    </ng-template>
+    </ng-template>-->
   </odx-header>
   <odx-main-menu
     [title]="('APP.TITLE' | translate)"
     [subtitle]="('APP.SUBTITLE' | translate)"
+    [copyright]="buildDateText"
     [disabled]="false"
     [isOpen]="false"
   >
@@ -48,6 +54,10 @@
         <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/codesystem']">
           <span class="custom-icon-wrapper"><img src="/code-system.svg" [attr.alt]="('APP.NAV.CODE_SYSTEM' | translate)" /></span>
           {{ 'APP.NAV.CODE_SYSTEM' | translate }}
+        </a>
+        <a odxRailNavigationItem iconName="placeholder" [routerLink]="['/management']">
+          <span class="custom-icon-wrapper"><img src="/management.svg" [attr.alt]="('APP.NAV.MANAGEMENT' | translate)" /></span>
+          {{ 'APP.NAV.MANAGEMENT' | translate }}
         </a>
 
       </odx-rail-navigation>

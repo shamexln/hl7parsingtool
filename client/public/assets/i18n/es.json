@@ -4,9 +4,10 @@
     "SUBTITLE": "1.0.1",
     "LOGOUT": "Cerrar sesión",
     "NAV": {
-      "PATIENT_QUERY": "Consulta de pacientes",
+      "PATIENT_QUERY": "Consulta",
       "CONFIGURATION": "Configuración",
-      "CODE_SYSTEM": "Sistema de códigos"
+      "CODE_SYSTEM": "Codificación",
+      "MANAGEMENT": "Gestión"
     }
   },
   "LOGIN": {
@@ -15,6 +16,9 @@
     "SUBMIT": "Iniciar sesión",
     "ERROR_INVALID": "Por favor introduzca un nombre de usuario y contraseña válidos",
     "LOGGED_OUT": "Se ha cerrado la sesión.",
+    "ERROR_PASSWORD_MISMATCH": "Las contraseñas no coinciden.",
+    "ERROR_SETUP_FAILED": "La configuración inicial ha fallado.",
+    "ERROR_PASSWORD_EXPIRED": "Contraseña caducada; actualice y cambie su contraseña.",
     "LANGUAGE": {
       "LABEL": "Idioma",
       "EN": "Inglés",
@@ -76,7 +80,7 @@
       "TITLE": "Servidor de la herramienta HL7"
     },
     "HL7_RECEIVER": {
-      "TITLE": "HL7_RECEIVER"
+      "TITLE": "Receptor HL7"
     },
     "ERROR_INVALID_PORT": "Por favor introduzca un número de puerto válido (1-65535)",
     "ERROR_UPDATE_PORT_FAILED": "Error al actualizar la configuración del puerto",
@@ -145,6 +149,19 @@
         "CHANNEL": "Canal",
         "CHANNEL_ID": "ID de canal"
       }
+    }
+  },
+  "MANAGEMENT": {
+    "AUTO_LOGOFF": {
+      "TITLE": "Cierre de sesión automático",
+      "SELECT_LABEL": "Cierre de sesión automático",
+      "OPTIONS": {
+        "NEVER": "Nunca",
+        "CUSTOM": "Personalizado (minutos)"
+      },
+      "MINUTES_PLACEHOLDER": "minutos",
+      "SAVED": "Guardado",
+      "ERROR_INVALID_MINUTES": "Por favor introduzca un número válido de minutos positivo"
     }
   }
 }

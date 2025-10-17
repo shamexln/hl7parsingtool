@@ -14,6 +14,7 @@
             formControlName="patientid"
             [attr.placeholder]="('PATIENT.INPUT.PATIENT_ID_PLACEHOLDER' | translate)"
             odxFormFieldControl
+
             required (keyup.enter)="queryPatient(1)"
           />
         </odx-form-field>
@@ -26,6 +27,7 @@
             formControlName="startdate"
             [attr.placeholder]="('PATIENT.DATE.START_PLACEHOLDER' | translate)"
             odxFormFieldControl
+            style="white-space: nowrap; min-width: max-content; overflow: visible;"
           >
             <input odxDatepickerControl/>
           </odx-datepicker>
@@ -39,14 +41,15 @@
             formControlName="enddate"
             [attr.placeholder]="('PATIENT.DATE.END_PLACEHOLDER' | translate)"
             odxFormFieldControl
+            style="white-space: nowrap; min-width: max-content; overflow: visible;"
           >
             <input odxDatepickerControl/>
           </odx-datepicker>
         </odx-form-field>
 
-        <button odxButton (click)="queryPatient(1)">{{ 'PATIENT.ACTIONS.SEARCH' | translate }}</button>
+        <button odxButton (click)="queryPatient(1)" style="white-space: nowrap; min-width: max-content; overflow: visible;">{{ 'PATIENT.ACTIONS.SEARCH' | translate }}</button>
 
-        <button odxButton (click)="exportAllDataToExcel()" [disabled]="!patientData() || patientData().length === 0">
+        <button odxButton (click)="exportAllDataToExcel()" [disabled]="!patientData() || patientData().length === 0" style="white-space: nowrap; min-width: max-content; overflow: visible;">
           {{ 'PATIENT.ACTIONS.EXPORT_ALL' | translate }}
         </button>
 

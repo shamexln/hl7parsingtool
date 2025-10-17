@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import {AvatarComponent} from '@odx/angular/components/avatar';
 import {MenuModule} from '@odx/angular/components/menu';
+import { HttpClient } from '@angular/common/http';
 
 
 // @ts-ignore
@@ -24,10 +25,22 @@ import {MenuModule} from '@odx/angular/components/menu';
 export class AppComponent {
   title: string = 'HL7 Parsing Tool';
   subtitle: string = '1.0.1';
+  buildDateText: string | null = '2020';
 
   get isLoggedIn$() { return this.auth.isLoggedIn$; }
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private http: HttpClient) {
+    // Load build date from backend (reads 'version' file on server)
+    this.http.get<{ buildDate: string | null }>('/api/version').subscribe({
+      next: (res) => {
+        const bd = res && typeof res.buildDate === 'string' ? res.buildDate.trim() : '';
+        this.buildDateText = bd ? `Build: ${bd}` : null;
+      },
+      error: () => {
+        this.buildDateText = null;
+      }
+    });
+  }
 
   changePassword() {
     // Minimal implementation: navigate to configuration page where credentials can be managed,

@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+// Http requests moved to services
+import { ConfigurationService } from './configuration.service';
+import { SecurityService } from '../security.service';
 import { CardModule} from '@odx/angular/components/card';
 import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {ButtonComponent, ButtonVariant} from '@odx/angular/components/button';
 import { TranslateModule, TranslateService} from '@ngx-translate/core';
 import { SessionIdleService } from '../session-idle.service';
-import {SelectComponent, SelectOptionComponent} from '@odx/angular/components/select';
 @Component({
   selector: 'app-configuration',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, AreaHeaderComponent, ButtonComponent, TranslateModule, SelectComponent, SelectOptionComponent],
+  imports: [CommonModule, FormsModule, CardModule, AreaHeaderComponent, ButtonComponent, TranslateModule],
   templateUrl: './configuration.component.html',
   styleUrl: './configuration.component.css'
 })
@@ -41,7 +42,7 @@ export class ConfigurationComponent implements OnInit {
   passwordErrorMessage: string = '';
   passwordSuccessMessage: string = '';
 
-  constructor(private http: HttpClient, private translate: TranslateService, private idle: SessionIdleService) {}
+  constructor(private configService: ConfigurationService, private securityService: SecurityService, private translate: TranslateService, private idle: SessionIdleService) {}
 
   // Auto Log-off
   autoLogoffSelect: 'Never' | 'Custom' = 'Never';
@@ -58,15 +59,11 @@ export class ConfigurationComponent implements OnInit {
   ngOnInit(): void {
     // Load saved port configurations from the server
     this.loadPortConfigurations();
-    // Load current password cycle
-    this.loadPasswordCycle();
-    // Load Auto Log-off setting from localStorage
-    this.loadAutoLogoff();
   }
 
   loadPortConfigurations(): void {
     // Fetch port configurations from the server
-    this.http.get<any>('/api/port-config').subscribe({
+    this.configService.getPortConfig().subscribe({
       next: (response) => {
         if (response.success) {
           // Update TCP port
@@ -178,7 +175,7 @@ export class ConfigurationComponent implements OnInit {
     this.errorMessage = '';
 
     // Save to the server via API
-    this.http.post<any>('/api/port-config', { tcpPort: Number(this.port) }).subscribe({
+    this.configService.updateTcpPort(Number(this.port)).subscribe({
       next: (response) => {
         if (response.success) {
           // Update saved port value
@@ -228,7 +225,7 @@ export class ConfigurationComponent implements OnInit {
     this.httpErrorMessage = '';
 
     // Save to the server via API
-    this.http.post<any>('/api/port-config', { httpPort: Number(this.httpPort) }).subscribe({
+    this.configService.updateHttpPort(Number(this.httpPort)).subscribe({
       next: (response) => {
         if (response.success) {
           // Update saved port value
@@ -256,7 +253,7 @@ export class ConfigurationComponent implements OnInit {
 
   loadPasswordCycle(): void {
     // Fetch current cycle from server
-    this.http.get<any>('/api/password-cycle').subscribe({
+    this.securityService.getPasswordCycle().subscribe({
       next: (res) => {
         if (res && res.success) {
           if (res.cycle) {
@@ -280,7 +277,7 @@ export class ConfigurationComponent implements OnInit {
       return;
     }
     this.isCycleSaving = true;
-    this.http.post<any>('/api/password-cycle', { cycle: this.selectedCycle }).subscribe({
+    this.securityService.setPasswordCycle(this.selectedCycle).subscribe({
       next: (res) => {
         if (res && res.success) {
           const ok = this.translate.instant('PASSWORD.CYCLE.SUCCESS_SAVED');
@@ -331,10 +328,7 @@ export class ConfigurationComponent implements OnInit {
 
     this.isPasswordSaving = true;
 
-    this.http.post<any>('/api/change-password', {
-      oldPassword: this.oldPassword,
-      newPassword: this.newPassword
-    }).subscribe({
+    this.securityService.changePassword(this.oldPassword, this.newPassword).subscribe({
       next: (response) => {
         if (response.success) {
           const ok = this.translate.instant('PASSWORD.CHANGE.SUCCESS');

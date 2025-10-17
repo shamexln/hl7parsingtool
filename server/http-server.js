@@ -14,7 +14,7 @@ const {getConnectionStats, getClientInfo} = require("./tcp-server");
 const {
     getAllTags, getCodeSystemNames, createCodeSystem, getCodesystemTableNameByName, updateDetailCodeSystem
 } = require("./codesystem");
-
+const { SQLITE_INTEGER_MAX, isPasswordCycleExpired } = require('./constants');
 /**
  * Creates an Express application for the HTTP API
  * @returns {express.Application} - Express application
@@ -31,7 +31,12 @@ function createHttpApp() {
     // allowing the frontend interceptor to trigger refresh via refresh token.
     const GLOBAL_AUTH_SECRET = (process.env.AUTH_SECRET || 'draeger-sdmi-monitor');
     function isProtectedApi(pathname) {
-        return /^\/api\//.test(pathname) && !/^\/api\/auth\//.test(pathname);
+        // Protect all /api/* except:
+        // - /api/auth/* (auth endpoints)
+        // - /api/version (public build info for UI bootstrapping)
+        return /^\/api\//.test(pathname)
+            && !/^\/api\/auth\//.test(pathname)
+            && !/^\/api\/version\/?$/.test(pathname);
     }
     app.use((req, res, next) => {
         try {
@@ -290,6 +295,21 @@ function createHttpApp() {
         }
     });
 
+    // Version/build info endpoint
+    app.get('/api/version', (req, res) => {
+        try {
+            const versionFile = path.join(process.cwd(), 'version');
+            if (fs.existsSync(versionFile)) {
+                const content = fs.readFileSync(versionFile, 'utf8').trim();
+                return res.json({ buildDate: content });
+            }
+            return res.json({ buildDate: null });
+        } catch (e) {
+            logger.error('Error reading version file:', e);
+            return res.status(500).json({ buildDate: null });
+        }
+    });
+
     // Auth helpers
     const AUTH_SECRET = (process.env.AUTH_SECRET || 'draeger-sdmi-monitor');
     const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '15m'; // 15 minutes
@@ -325,7 +345,7 @@ function createHttpApp() {
             }
 
             const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
-            db.get('SELECT username, password_enc, iv, tag FROM users WHERE username = ?', [username], (err, row) => {
+            db.get('SELECT username, uid, password_enc, iv, tag, password_cycle_days FROM users WHERE username = ?', [username], (err, row) => {
                 if (err) {
                     logger.error('DB error during login:', err);
                     db.close();
@@ -350,7 +370,39 @@ function createHttpApp() {
                     return res.status(500).json({ success: false });
                 }
 
-                // Credentials OK: issue JWT access token and a stored refresh token
+                // Password expired check based on cycle and latest password history
+                const uid = row.uid;
+                let cycleToken = row.password_cycle_days ? String(row.password_cycle_days).toUpperCase() : String(SQLITE_INTEGER_MAX);
+                if (uid) {
+                    db.get('SELECT created_at FROM password WHERE uid = ? ORDER BY datetime(created_at) DESC LIMIT 1', [uid], (perr, prow) => {
+                        if (perr) {
+                            logger.error('DB error reading password history:', perr);
+                            db.close();
+                            return res.status(500).json({ success: false });
+                        }
+                        const lastStr = (prow && prow.created_at) ? String(prow.created_at) : null;
+                        const expired = isPasswordCycleExpired(cycleToken, lastStr);
+                        if (expired) {
+                            db.close();
+                            return res.status(403).json({ success: false, passwordExpired: true });
+                        }
+                        // Credentials OK and not expired: issue JWT access + refresh
+                        const accessToken = jwt.sign({ sub: username }, AUTH_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });
+                        const refreshToken = crypto.randomBytes(32).toString('hex');
+                        const expiresAt = Date.now() + AUTH_TOKEN_TTL_MS;
+                        db.run('INSERT OR REPLACE INTO auth_tokens (token, username, expires_at) VALUES (?, ?, ?)', [refreshToken, username, expiresAt], (insErr) => {
+                            db.close();
+                            if (insErr) {
+                                logger.error('DB error saving refresh token:', insErr);
+                                return res.status(500).json({ success: false });
+                            }
+                            return res.json({ success: true, token: accessToken, refreshToken });
+                        });
+                    });
+                    return;
+                }
+
+                // Credentials OK and no expiration configured: issue JWT access + refresh
                 const accessToken = jwt.sign({ sub: username }, AUTH_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });
                 const refreshToken = crypto.randomBytes(32).toString('hex');
                 const expiresAt = Date.now() + AUTH_TOKEN_TTL_MS;
@@ -459,27 +511,47 @@ function createHttpApp() {
                 if (tblErr) {
                     db.close();
                     logger.error('DB error checking users table existence:', tblErr);
-                    return res.status(500).json({ setupRequired: false });
+                    return res.status(500).json({ setupRequired: false, status: 'error' });
                 }
                 if (!tblRow) {
                     // No users table -> first login required
                     db.close();
-                    return res.json({ setupRequired: true });
+                    return res.json({ setupRequired: true, status: 'initial' });
                 }
                 // Step 2: users table exists, check if any user rows exist
                 db.get('SELECT COUNT(1) as cnt FROM users', [], (cntErr, cntRow) => {
-                    db.close();
                     if (cntErr) {
+                        db.close();
                         logger.error('DB error counting users:', cntErr);
-                        return res.status(500).json({ setupRequired: false });
+                        return res.status(500).json({ setupRequired: false, status: 'error' });
                     }
-                    const needSetup = !cntRow || Number(cntRow.cnt) === 0;
-                    return res.json({ setupRequired: needSetup });
+                    const userCount = Number(cntRow.cnt);
+                    if (!cntRow || userCount === 0) {
+                        db.close();
+                        return res.json({ setupRequired: true, status: 'initial' });
+                    }
+
+                    // if (userCount > 1)
+                    db.get('SELECT password_cycle_days, created_at FROM users LIMIT 1', [], (userErr, userRow) => {
+                        db.close();
+                        if (userErr || !userRow) {
+                            logger.error('DB error fetching user for setup-required:', userErr);
+                            return res.status(500).json({ setupRequired: false, status: 'error' });
+                        }
+                        let cycleToken = (userRow.password_cycle_days != null) ? String(userRow.password_cycle_days) : String(SQLITE_INTEGER_MAX);
+                        let expired = isPasswordCycleExpired(cycleToken, userRow.created_at);
+                        if (expired) {
+                            return res.json({ setupRequired: true, status: 'expired' });
+                        } else {
+                            return res.json({ setupRequired: false, status: 'ok' });
+                        }
+
+                    });
                 });
             });
         } catch (error) {
             logger.error(`Error checking setup-required: ${error.message}`);
-            return res.status(500).json({ setupRequired: false });
+            return res.status(500).json({ setupRequired: false, status: 'ok' });
         }
     });
 
@@ -487,28 +559,16 @@ function createHttpApp() {
     // Frontend already confirmed password twice; backend stores without extra validation on first setup
     app.post('/api/auth/setup-initial', (req, res) => {
         try {
-            const { password, username } = req.body || {};
-            const targetUser = (username && String(username).trim()) || 'admin';
+            const { password } = req.body || {};
+            const targetUser = 'admin';
             if (!password) {
                 return res.status(400).json({ success: false, message: 'Missing password' });
             }
 
             const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
-            // Ensure users table exists (in case database initializer didn't create it yet)
-            db.run(`CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                password_enc BLOB NOT NULL,
-                iv BLOB NOT NULL,
-                tag BLOB NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )`, [], (createErr) => {
-                if (createErr) {
-                    db.close();
-                    logger.error('DB error creating users table:', createErr);
-                    return res.status(500).json({ success: false });
-                }
-                // Allow setup only if no user exists yet
+            const { enc, iv, tag } = encryptText(password);
+            const uid = (crypto.randomUUID && typeof crypto.randomUUID === 'function') ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex');
+            const nowIso = new Date().toISOString();
                 db.get('SELECT COUNT(1) as cnt FROM users', [], (selErr, row) => {
                     if (selErr) {
                         db.close();
@@ -516,21 +576,56 @@ function createHttpApp() {
                         return res.status(500).json({ success: false });
                     }
                     if (row && Number(row.cnt) > 0) {
-                        db.close();
-                        return res.status(409).json({ success: false, message: 'Already initialized' });
+                        // only update with new password , iv, tag and new created time if user already exists
+                        // keep the old password_cycle_days
+                        db.get('SELECT username FROM users LIMIT 1', [], (userErr, userRow) => {
+                            if (userErr || !userRow) {
+                                db.close();
+                                logger.error('DB error fetching existing user:', userErr);
+                                return res.status(500).json({ success: false });
+                            }
+                            const existingUsername = userRow.username;
+                            db.serialize(() => {
+                                db.run('UPDATE users SET uid = ?, password_enc = ?, iv = ?, tag = ?,  created_at = ? WHERE username = ?', [uid, enc, iv, tag, nowIso, existingUsername], (updErr) => {
+                                    if (updErr) {
+                                        logger.error('DB error updating user:', updErr);
+                                        db.close();
+                                        return res.status(500).json({ success: false });
+                                    }
+                                });
+                                db.run('INSERT INTO password (uid, password_enc, iv, tag, created_at) VALUES (?, ?, ?, ?, ?)', [uid, enc, iv, tag, nowIso], (pwdErr) => {
+                                    db.close();
+                                    if (pwdErr) {
+                                        logger.error('DB error inserting password history:', pwdErr);
+                                        return res.status(500).json({ success: false });
+                                    }
+                                    return res.json({ success: true });
+                                });
+                            });
+                        });
+                    }
+                    else {
+                        db.serialize(() => {
+                            db.run('INSERT INTO users (username, uid, password_enc, iv, tag, password_cycle_days, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)', [targetUser, uid, enc, iv, tag, String(SQLITE_INTEGER_MAX), nowIso], (insErr) => {
+                                if (insErr) {
+                                    logger.error('DB error inserting initial user:', insErr);
+                                    // still try to close
+                                    return res.status(500).json({ success: false });
+                                }
+                            });
+                            db.run('INSERT INTO password (uid, password_enc, iv, tag, created_at) VALUES (?, ?, ?, ?, ?)', [uid, enc, iv, tag, nowIso], (pwdErr) => {
+                                db.close();
+                                if (pwdErr) {
+                                    logger.error('DB error inserting password history:', pwdErr);
+                                    return res.status(500).json({ success: false });
+                                }
+                                return res.json({ success: true });
+                            });
+                        });
+
                     }
 
-                    const { enc, iv, tag } = encryptText(password);
-                    db.run('INSERT INTO users (username, password_enc, iv, tag) VALUES (?, ?, ?, ?)', [targetUser, enc, iv, tag], (insErr) => {
-                        db.close();
-                        if (insErr) {
-                            logger.error('DB error inserting initial user:', insErr);
-                            return res.status(500).json({ success: false });
-                        }
-                        return res.json({ success: true });
-                    });
                 });
-            });
         } catch (error) {
             logger.error(`Error during setup-initial: ${error.message}`);
             return res.status(500).json({ success: false });
@@ -710,13 +805,36 @@ function createHttpApp() {
                 }
 
                 const { enc, iv, tag } = encryptText(newPassword);
-                db.run('UPDATE users SET password_enc = ?, iv = ?, tag = ? WHERE username = ?', [enc, iv, tag, username], (updErr) => {
-                    db.close();
-                    if (updErr) {
-                        logger.error('DB error updating password:', updErr);
+                const nowIso = new Date().toISOString();
+                db.get('SELECT uid FROM users WHERE username = ?', [username], (uErr, uRow) => {
+                    if (uErr || !uRow) {
+                        db.close();
+                        if (uErr) logger.error('DB error fetching UID:', uErr);
                         return res.status(500).json({ success: false, message: 'Failed to update password' });
                     }
-                    return res.json({ success: true });
+                    const uid = uRow.uid;
+                    db.serialize(() => {
+                        db.run('UPDATE users SET password_enc = ?, iv = ?, tag = ?, created_at = ? WHERE username = ?', [enc, iv, tag, nowIso, username], (updErr) => {
+                            if (updErr) {
+                                logger.error('DB error updating password:', updErr);
+                                db.close();
+                                return res.status(500).json({ success: false, message: 'Failed to update password' });
+                            }
+                        });
+                        if (uid) {
+                            db.run('INSERT INTO password (uid, password_enc, iv, tag, created_at) VALUES (?, ?, ?, ?, ?)', [uid, enc, iv, tag, nowIso], (insErr) => {
+                                db.close();
+                                if (insErr) {
+                                    logger.error('DB error inserting password history:', insErr);
+                                    return res.status(500).json({ success: false, message: 'Failed to update password' });
+                                }
+                                return res.json({ success: true });
+                            });
+                        } else {
+                            db.close();
+                            return res.json({ success: true });
+                        }
+                    });
                 });
             });
         } catch (error) {
@@ -739,7 +857,7 @@ function createHttpApp() {
                 db.close();
                 return callback(null);
             }
-            db.run("ALTER TABLE users ADD COLUMN password_cycle_days INTEGER", [], (alterErr) => {
+            db.run(`ALTER TABLE users ADD COLUMN password_cycle_days TEXT DEFAULT ${SQLITE_INTEGER_MAX}`, [], (alterErr) => {
                 if (alterErr) {
                     // If users table doesn't exist yet, ignore here (setup-initial will create). For other errors log.
                     logger.warn('ALTER TABLE users ADD COLUMN password_cycle_days failed (may be fine if users not yet created):', alterErr.message || alterErr);
@@ -750,7 +868,7 @@ function createHttpApp() {
         });
     }
 
-    const CYCLE_MAP = { '1m': 30, '2m': 60, '6m': 180, '1y': 365 };
+    const CYCLE_MAP = { '-1': SQLITE_INTEGER_MAX, '1m': 30, '2m': 60, '6m': 180, '1y': 365 };
     const CYCLE_KEYS = Object.keys(CYCLE_MAP);
 
     app.get('/api/password-cycle', (req, res) => {
@@ -770,13 +888,15 @@ function createHttpApp() {
                 db.get('SELECT password_cycle_days FROM users WHERE username = ?', [username], (err, row) => {
                     db.close();
                     if (err) return res.status(500).json({ success: false, message: 'Database error' });
-                    const days = row && row.password_cycle_days != null ? Number(row.password_cycle_days) : null;
-                    let cycle = null;
-                    if (days != null) {
-                        // reverse map
-                        cycle = CYCLE_KEYS.find(k => CYCLE_MAP[k] === days) || null;
+                    let cycleToken = (row && row.password_cycle_days != null) ? String(row.password_cycle_days) : String(SQLITE_INTEGER_MAX);
+                    if (/^\d+$/.test(cycleToken)) {
+                        const asNum = Number(cycleToken);
+                        const found = Object.entries(CYCLE_MAP).find(([k,v]) => v === asNum);
+                        cycleToken = found ? (k => (k === '-1' ? '-1' : k))(found[0]) : '-1';
                     }
-                    return res.json({ success: true, cycle, days });
+                    const norm = ['-1','1m','2m','6m','1y'].includes(cycleToken) ? cycleToken : '-1';
+                    const days = norm === '-1' ? null : CYCLE_MAP[norm.toLowerCase()];
+                    return res.json({ success: true, cycle: norm, days });
                 });
             });
         } catch (e) {
@@ -788,9 +908,17 @@ function createHttpApp() {
     app.post('/api/password-cycle', (req, res) => {
         try {
             const { cycle } = req.body || {};
-            if (!cycle || !CYCLE_KEYS.includes(String(cycle))) {
-                return res.status(400).json({ success: false, message: 'Invalid cycle. Allowed: 1m, 2m, 6m, 1y' });
+            if (!cycle) {
+                return res.status(400).json({ success: false, message: 'Invalid cycle. Allowed: -1, 1m, 2m, 6m, 1y' });
             }
+            const tokenIn = String(cycle);
+            const allowed = ['-1','1m','2m','6m','1y'];
+            if (!allowed.includes(tokenIn)) {
+                return res.status(400).json({ success: false, message: 'Invalid cycle. Allowed: -1, 1m, 2m, 6m, 1y' });
+            }
+
+            const cycleToken = CYCLE_MAP[tokenIn] !== undefined ? CYCLE_MAP[tokenIn] : SQLITE_INTEGER_MAX;
+
             // auth
             const authHeader = req.headers['authorization'] || '';
             const m = authHeader.match(/^Bearer\s+(.+)$/i);
@@ -802,9 +930,8 @@ function createHttpApp() {
 
             ensurePasswordCycleColumn((colErr) => {
                 if (colErr) return res.status(500).json({ success: false, message: 'Internal error' });
-                const days = CYCLE_MAP[cycle];
                 const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
-                db.run('UPDATE users SET password_cycle_days = ? WHERE username = ?', [days, username], (updErr) => {
+                db.run('UPDATE users SET password_cycle_days = ? WHERE username = ?', [cycleToken, username], (updErr) => {
                     db.close();
                     if (updErr) {
                         logger.error('DB error updating password cycle:', updErr);
