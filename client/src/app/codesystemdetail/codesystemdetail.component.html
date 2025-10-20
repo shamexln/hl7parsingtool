@@ -91,7 +91,6 @@
         </table>
       </div>
 
-
     </div>
   </div>
   <div class="odx-app-page__footer">
@@ -102,19 +101,20 @@
       (pageChanged)="onPageChange($event)"
     />
   </div>
-
-
-  <!--  <div>
-      <div odxLayout="grid horizontal-end">
-        <div odxLayout="1 offset-11 ">
-          <button odxButton [variant]="variantValue" style="margin-right: 24px;">Copy</button>
-          <button odxButton [variant]="variantValue">Back</button>
-
-        </div>
-
-
-      </div>
-    </div>-->
-
-
 </div>
+<ng-template [odxModal]="args" #modal="odxModal" let-modalRef>
+<!--  <odx-modal-header>
+    <odx-area-header>{{ 'APP.TITLE' | translate }}</odx-area-header>
+  </odx-modal-header>-->
+  <odx-modal-hero [icon]="modalRef.data?.heroIcon" [variant]="modalRef.data?.heroVariant">
+   <!-- {{ 'APP.TITLE' | translate }}-->
+  </odx-modal-hero>
+  <odx-modal-content>
+    <p>
+      <strong>{{ modalRef.data?.message }}</strong>
+    </p>
+  </odx-modal-content>
+  <odx-modal-footer>
+    <button odxButton variant="primary" odxModalClose>Close</button>
+  </odx-modal-footer>
+</ng-template>

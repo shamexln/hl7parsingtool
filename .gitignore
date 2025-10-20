@@ -4,3 +4,12 @@
 
 /.vs
 /client/.angular/cache/19.2.6/hl7parsegui
+/server/.idea
+/server/logs
+/server/logs/combined.log
+/server/node_modules
+/server/hl7_messages.db
+/client/.idea
+/client/dist/hl7parsegui
+/client/node_modules
+/.idea

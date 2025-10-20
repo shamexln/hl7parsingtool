@@ -99,7 +99,8 @@
     "SAVING": "Guardando",
     "CONFIRM": "Confirmar",
     "SUBMITTING": "Enviando...",
-    "ERROR_NETWORK": "No se pudo conectar con el servidor"
+    "ERROR_NETWORK": "No se pudo conectar con el servidor",
+    "NOT_FOUND": "No encontrado"
   },
   "PASSWORD": {
     "MANAGEMENT": "Gestión de contraseñas",
@@ -135,6 +136,10 @@
   },
   "CODESYSTEM": {
     "HEADER": "Sistema de códigos",
+    "ERRMSG": {
+      "INVALID_DATA_FORMAT": "El servidor devolvió un formato de datos no válido"
+    },
+    "UPDATED_COUNT": "Se han actualizado un total de {{count}} datos.",
     "DETAIL": {
       "TABLE": {
         "ROW_INDEX": "Índice de fila",

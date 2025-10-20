@@ -1,4 +1,4 @@
-import {Component, computed, OnInit, signal} from '@angular/core';
+import {Component, computed, OnInit, signal, ViewChild} from '@angular/core';
 import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {CodesystemService} from '../codesystem.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -10,7 +10,14 @@ import {ButtonVariant} from '@odx/angular/components/button';
 import {FormsModule} from '@angular/forms';
 import {debounceTime, Subject} from 'rxjs';
 import { getCodesystemDisplayName } from '../shared/codesystem-name.util';
-import { TranslateModule } from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {
+  ModalModule,
+  ModalContentDirective,
+  ModalDirective,
+  ModalFooterComponent,
+  ModalOptions, ModalSize
+} from '@odx/angular/components/modal';
 
 interface TableData {
   row_id: string;
@@ -35,13 +42,18 @@ interface TableData {
     DataTableModule,
     FormFieldModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
+    ModalModule,
+    ModalDirective,
+    ModalContentDirective,
+    ModalFooterComponent
   ],
   templateUrl: './codesystemdetail.component.html',
   standalone: true,
   styleUrl: './codesystemdetail.component.css'
 })
 export class CodesystemdetailComponent implements OnInit {
+  @ViewChild('modal', { static: true }) modal!: ModalDirective;
   public filterText = signal<string>('');
   public codesystemData = signal<any[]>([]);
   public originalcodesystemData: TableData[] = [];
@@ -52,7 +64,7 @@ export class CodesystemdetailComponent implements OnInit {
   public pageSize = 1000;
   public totalPages = 0;
   public totalItems = 0;
-  previousPageIndex = 0; // 默认第一页索引通常为0
+  previousPageIndex = 0;
   public paginationParams = signal<PageChangeEvent>({
     pageSize: this.pageSize,
     length: this.totalItems,
@@ -61,14 +73,14 @@ export class CodesystemdetailComponent implements OnInit {
   public variantValue = ButtonVariant.SECONDARY;
   public tablevariantValue = TableVariant.STRIPED;
   private descriptionInput$ = new Subject<{ tagkey: string, val: string }>();
-
   // Expose shared helper for template usage
   public getCodesystemDisplayName = getCodesystemDisplayName;
 
   constructor(
     private codesystemService: CodesystemService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {
     this.descriptionInput$.pipe(
       debounceTime(1000)
@@ -80,7 +92,7 @@ export class CodesystemdetailComponent implements OnInit {
 
   private filteredData(): TableData[] {
     const data: TableData[] = [];
-    // 从信号获取最新值
+    // Get the latest value from the signal
     const codesystemDataArray = this.codesystemData();
 
     if (codesystemDataArray && Array.isArray(codesystemDataArray)) {
@@ -114,8 +126,20 @@ export class CodesystemdetailComponent implements OnInit {
 
   public displayedColumns = ['row_id', 'observationtype', 'datatype', 'encode', 'parameterlabel', 'encodesystem', 'subid', 'description',
     'source', 'channel', 'channelid'];
+  args: Partial<ModalOptions> | "" | null | undefined;
 
-
+  openModalWithData(message: string, heroIcon: string = 'info', heroVariant: string = 'success', afterClose?: () => void) {
+    // Set args; the data field will be passed to modalRef.data
+    this.args =  {
+      data: { message, heroIcon, heroVariant } ,
+      size: ModalSize.XSMALL
+    };
+    this.modal.open();
+    const sub = this.modal.modalClose?.subscribe(() => {
+      sub?.unsubscribe();
+      if (afterClose) afterClose();
+    });
+  }
   ngOnInit(): void {
     // Get the id parameter from the route
     this.route.paramMap.subscribe(params => {
@@ -161,10 +185,13 @@ export class CodesystemdetailComponent implements OnInit {
       console.log('update codesystem successfully:', result);
       // pop-up dialog tell user how many data are updaed.
       if (result.success) {
-        window.alert(`Total ${result.updated} data are updated.`);
+        const message = this.translate.instant('CODESYSTEM.UPDATED_COUNT', { count: result.updated });
+        this.openModalWithData(message,'info', 'success', ()=> {
+          this.queryCodesystemDetail(this.id, this.codesystemName, this.page);
+        });
 
       }
-      this.queryCodesystemDetail(this.id, this.codesystemName, this.page);
+
 
     });
 
@@ -180,10 +207,10 @@ export class CodesystemdetailComponent implements OnInit {
     } else {
       console.log('page not changed');
     }
+    // Update page index record
+    this.previousPageIndex = currentPageIndex;
 
-    this.previousPageIndex = currentPageIndex; // 更新页码记录
-
-    // 更新当前页状态，用于后端API请求
+    // Update the current page state for backend API requests
     this.page = currentPageIndex + 1;
     this.pageSize = event.pageSize;
 
@@ -194,7 +221,7 @@ export class CodesystemdetailComponent implements OnInit {
       ,
     });
 
-    this.queryCodesystemDetail(this.id, this.codesystemName, this.page); // 调用API重新加载对应页的数据
+    this.queryCodesystemDetail(this.id, this.codesystemName, this.page);
   }
 
   queryCodesystemDetail(id: string, codesystemname: string, page: number = 1) {
@@ -206,7 +233,7 @@ export class CodesystemdetailComponent implements OnInit {
         const result = Array.isArray(data) && data.length > 0 ? data[0] : null;
         if (result) {
 
-          this.codesystemData.set(result.rows || []); // 设置新数据（响应式的信号更新）
+          this.codesystemData.set(result.rows || []); // Set new data (reactive signal update)
           this.originalcodesystemData = JSON.parse(JSON.stringify(result.rows));
 
           this.page = result.page;
@@ -223,7 +250,7 @@ export class CodesystemdetailComponent implements OnInit {
 
         } else {
           this.codesystemData.set([]);
-          this.errorMessage = 'Server returned invalid data format';
+          this.errorMessage = this.translate.instant('CODESYSTEM.ERRMSG.INVALID_DATA_FORMAT');
           console.error("Server returned invalid data format", data);
         }
 

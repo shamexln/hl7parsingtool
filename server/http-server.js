@@ -607,7 +607,7 @@ function createHttpApp() {
                                         return res.status(500).json({ success: false });
                                     }
                                 });
-                                db.run('UPDATE password SET obsoleted = ? WHERE uid = ?' ['1', existingUid], (updErr) => {
+                                db.run('UPDATE password SET obsoleted = ? WHERE uid = ?', ['1', existingUid], (updErr) => {
                                     if (updErr) {
                                         logger.error('DB error updaeing password history:', updErr);
                                         db.close();

@@ -99,7 +99,8 @@
     "SAVING": "Speichern...",
     "CONFIRM": "Bestätigen",
     "SUBMITTING": "Wird gesendet...",
-    "ERROR_NETWORK": "Verbindung zum Server fehlgeschlagen"
+    "ERROR_NETWORK": "Verbindung zum Server fehlgeschlagen",
+    "NOT_FOUND": "Nicht gefunden"
   },
   "PASSWORD": {
     "MANAGEMENT": "Kennwortverwaltung",
@@ -135,6 +136,10 @@
   },
   "CODESYSTEM": {
     "HEADER": "Codesystem",
+    "ERRMSG": {
+      "INVALID_DATA_FORMAT": "Der Server hat ein ungültiges Datenformat zurückgegeben"
+    },
+    "UPDATED_COUNT": "Insgesamt {{count}} Daten wurden aktualisiert.",
     "DETAIL": {
       "TABLE": {
         "ROW_INDEX": "Zeilenindex",

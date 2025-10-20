@@ -99,7 +99,8 @@
     "SAVING": "Saving",
     "CONFIRM":"Confirm",
     "SUBMITTING": "Submitting...",
-    "ERROR_NETWORK": "Failed to connect to server"
+    "ERROR_NETWORK": "Failed to connect to server",
+    "NOT_FOUND": "Not Found"
   },
   "PASSWORD": {
     "MANAGEMENT": "Password Management",
@@ -135,6 +136,10 @@
   },
   "CODESYSTEM": {
     "HEADER": "Code System",
+    "ERRMSG": {
+      "INVALID_DATA_FORMAT": "Server returned invalid data format"
+    },
+    "UPDATED_COUNT": "Total {{count}} data are updated.",
     "DETAIL": {
       "TABLE": {
         "ROW_INDEX": "Row Index",

@@ -99,7 +99,8 @@
     "SAVING": "Enregistrement",
     "CONFIRM": "Confirmer",
     "SUBMITTING": "Envoi...",
-    "ERROR_NETWORK": "Échec de la connexion au serveur"
+    "ERROR_NETWORK": "Échec de la connexion au serveur",
+    "NOT_FOUND": "Introuvable"
   },
   "PASSWORD": {
     "MANAGEMENT": "Gestion des mots de passe",
@@ -135,6 +136,10 @@
   },
   "CODESYSTEM": {
     "HEADER": "Système de codes",
+    "ERRMSG": {
+      "INVALID_DATA_FORMAT": "Le serveur a renvoyé un format de données invalide"
+    },
+    "UPDATED_COUNT": "Un total de {{count}} données ont été mises à jour.",
     "DETAIL": {
       "TABLE": {
         "ROW_INDEX": "Index de ligne",
