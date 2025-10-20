@@ -104,8 +104,8 @@
   "PASSWORD": {
     "MANAGEMENT": "Password Management",
     "CYCLE": {
-      "TITLE": "Password Cycle",
-      "SELECT_LABEL":"Period",
+      "TITLE": "Password Expiration Cycle",
+      "SELECT_LABEL":"Expiration Cycle",
       "OPTIONS": {
         "NEVER": "Never",
         "1M": " 1 Month",
@@ -113,16 +113,16 @@
         "6M": " 6 Months",
         "1Y": " 1 Year"
       },
-      "ERROR_INVALID": "Invalid cycle",
-      "SUCCESS_SAVED": "Password update cycle saved",
-      "ERROR_SAVE_FAILED": "Failed to save password update cycle"
+      "ERROR_INVALID": "Invalid expiration cycle",
+      "SUCCESS_SAVED": "Password expiration cycle saved",
+      "ERROR_SAVE_FAILED": "Failed to save password expiration cycle"
     },
     "CHANGE": {
-      "TITLE": "Change Password",
-      "CURRENT_LABEL": "Current Password",
+      "TITLE": "Modify Password",
+      "CURRENT_LABEL": "Old Password",
       "NEW_LABEL": "New Password",
-      "CONFIRM_LABEL": "Confirm Password",
-      "CURRENT_PLACEHOLDER":"Enter current password",
+      "CONFIRM_LABEL": "Confirm New Password",
+      "CURRENT_PLACEHOLDER":"Enter old password",
       "NEW_PLACEHOLDER":"Enter new password",
       "CONFIRM_PLACEHOLDER":"Confirm new password",
       "ERROR_INVALID": "Please enter a valid password",

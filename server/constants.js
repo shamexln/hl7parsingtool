@@ -1,4 +1,5 @@
 const SQLITE_INTEGER_MAX = 9223372036854775807;
+const OBSOLETED_DEFAULT_VALUE = 0;
 
 /**
  * 判断密码周期是否过期
@@ -22,7 +23,27 @@ function isPasswordCycleExpired(cycleDays, createdTime) {
     return (Date.now() - createdAt) > (days * 24 * 60 * 60 * 1000);
 }
 
+function isObviousSequence(password) {
+    // simple sequence checks
+    const isRepeatedChar = (s) => /^(.)\1+$/.test(s);
+    const isSequentialNumeric = (s) => {
+        if (!/^\d+$/.test(s)) return false;
+        let inc = true, dec = true;
+        for (let i = 1; i < s.length; i++) {
+            const prev = s.charCodeAt(i-1) - 48;
+            const cur = s.charCodeAt(i) - 48;
+            if (cur !== prev + 1) inc = false;
+            if (cur !== prev - 1) dec = false;
+            if (!inc && !dec) return false;
+        }
+        return inc || dec;
+    };
+    const isObviousSequence = (s) => isRepeatedChar(s) || isSequentialNumeric(s);
+    return isObviousSequence(password);
+}
 module.exports = {
     SQLITE_INTEGER_MAX,
-    isPasswordCycleExpired
+    OBSOLETED_DEFAULT_VALUE,
+    isPasswordCycleExpired,
+    isObviousSequence
 };

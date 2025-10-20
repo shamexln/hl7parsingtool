@@ -14,7 +14,7 @@ const {getConnectionStats, getClientInfo} = require("./tcp-server");
 const {
     getAllTags, getCodeSystemNames, createCodeSystem, getCodesystemTableNameByName, updateDetailCodeSystem
 } = require("./codesystem");
-const { SQLITE_INTEGER_MAX, isPasswordCycleExpired } = require('./constants');
+const { SQLITE_INTEGER_MAX, isPasswordCycleExpired, isObviousSequence} = require('./constants');
 /**
  * Creates an Express application for the HTTP API
  * @returns {express.Application} - Express application
@@ -565,6 +565,11 @@ function createHttpApp() {
                 return res.status(400).json({ success: false, message: 'Missing password' });
             }
 
+            // simple sequence checks
+            if (isObviousSequence(String(password))) {
+                return res.status(400).json({ success: false, message: 'Password is too simple (obvious sequence)' });
+            }
+
             const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
             const { enc, iv, tag } = encryptText(password);
             const uid = (crypto.randomUUID && typeof crypto.randomUUID === 'function') ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex');
@@ -578,17 +583,33 @@ function createHttpApp() {
                     if (row && Number(row.cnt) > 0) {
                         // only update with new password , iv, tag and new created time if user already exists
                         // keep the old password_cycle_days
-                        db.get('SELECT username FROM users LIMIT 1', [], (userErr, userRow) => {
+                        db.get('SELECT * FROM users LIMIT 1', [], (userErr, userRow) => {
                             if (userErr || !userRow) {
                                 db.close();
                                 logger.error('DB error fetching existing user:', userErr);
                                 return res.status(500).json({ success: false });
                             }
+
+                            // previous password checks
+                            const storedPwd = decryptText(userRow.password_enc, userRow.iv, userRow.tag);
+                            if (storedPwd === (String(password))) {
+                                db.close();
+                                return res.status(400).json({ success: false, message: 'New password must differ from the previous one' });
+                            }
+
                             const existingUsername = userRow.username;
+                            const existingUid = userRow.uid;
                             db.serialize(() => {
                                 db.run('UPDATE users SET uid = ?, password_enc = ?, iv = ?, tag = ?,  created_at = ? WHERE username = ?', [uid, enc, iv, tag, nowIso, existingUsername], (updErr) => {
                                     if (updErr) {
                                         logger.error('DB error updating user:', updErr);
+                                        db.close();
+                                        return res.status(500).json({ success: false });
+                                    }
+                                });
+                                db.run('UPDATE password SET obsoleted = ? WHERE uid = ?' ['1', existingUid], (updErr) => {
+                                    if (updErr) {
+                                        logger.error('DB error updaeing password history:', updErr);
                                         db.close();
                                         return res.status(500).json({ success: false });
                                     }
@@ -739,20 +760,6 @@ function createHttpApp() {
             }
 
             // simple sequence checks
-            const isRepeatedChar = (s) => /^(.)\1+$/.test(s);
-            const isSequentialNumeric = (s) => {
-                if (!/^\d+$/.test(s)) return false;
-                let inc = true, dec = true;
-                for (let i = 1; i < s.length; i++) {
-                    const prev = s.charCodeAt(i-1) - 48;
-                    const cur = s.charCodeAt(i) - 48;
-                    if (cur !== prev + 1) inc = false;
-                    if (cur !== prev - 1) dec = false;
-                    if (!inc && !dec) return false;
-                }
-                return inc || dec;
-            };
-            const isObviousSequence = (s) => isRepeatedChar(s) || isSequentialNumeric(s);
             if (isObviousSequence(String(newPassword))) {
                 return res.status(400).json({ success: false, message: 'New password is too simple (obvious sequence)' });
             }
@@ -822,6 +829,14 @@ function createHttpApp() {
                             }
                         });
                         if (uid) {
+                            db.run('UPDATE password SET obsoleted = ? WHERE uid = ?', ['1', uid], (updErr) => {
+                                if (updErr) {
+                                    logger.error('DB error updating password history:', updErr);
+                                    db.close();
+                                    return res.status(500).json({ success: false, message: 'Failed to update password' });
+                                }
+                                return res.json({ success: true });
+                            });
                             db.run('INSERT INTO password (uid, password_enc, iv, tag, created_at) VALUES (?, ?, ?, ?, ?)', [uid, enc, iv, tag, nowIso], (insErr) => {
                                 db.close();
                                 if (insErr) {

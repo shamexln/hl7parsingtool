@@ -104,8 +104,8 @@
   "PASSWORD": {
     "MANAGEMENT": "Gestion des mots de passe",
     "CYCLE": {
-      "TITLE": "Cycle de mot de passe",
-      "SELECT_LABEL": "Période",
+      "TITLE": "Cycle d'expiration du mot de passe",
+      "SELECT_LABEL": "Cycle d'expiration",
       "OPTIONS": {
         "NEVER": "Jamais",
         "1M": " 1 mois",
@@ -113,18 +113,18 @@
         "6M": " 6 mois",
         "1Y": " 1 an"
       },
-      "ERROR_INVALID": "Cycle invalide",
-      "SUCCESS_SAVED": "Cycle de mise à jour du mot de passe enregistré",
-      "ERROR_SAVE_FAILED": "Échec de l'enregistrement du cycle de mise à jour du mot de passe"
+      "ERROR_INVALID": "Cycle d'expiration invalide",
+      "SUCCESS_SAVED": "Cycle d'expiration du mot de passe enregistré",
+      "ERROR_SAVE_FAILED": "Échec de l'enregistrement du cycle d'expiration du mot de passe"
     },
     "CHANGE": {
-      "TITLE": "Changer le mot de passe",
-      "CURRENT_LABEL": "Mot de passe actuel",
+      "TITLE": "Modif mot de passe",
+      "CURRENT_LABEL": "Ancien mot de passe",
       "NEW_LABEL": "Nouveau mot de passe",
-      "CONFIRM_LABEL": "Confirmer le mot de passe",
-      "CURRENT_PLACEHOLDER": "Entrer le mot de passe actuel",
-      "NEW_PLACEHOLDER": "Entrer le nouveau mot de passe",
-      "CONFIRM_PLACEHOLDER": "Confirmer le nouveau mot de passe",
+      "CONFIRM_LABEL": "Conf. nouveau mot de passe",
+      "CURRENT_PLACEHOLDER": "Saisissez l'ancien mot de passe",
+      "NEW_PLACEHOLDER": "Saisissez le nouveau mot de passe",
+      "CONFIRM_PLACEHOLDER": "Confirmez le nouveau mot de passe",
       "ERROR_INVALID": "Veuillez entrer un mot de passe valide",
       "ERROR_MISMATCH": "Le nouveau mot de passe et la confirmation ne correspondent pas",
       "ERROR_LENGTH": "Le nouveau mot de passe doit comporter au moins 8 caractères",

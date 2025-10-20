@@ -86,8 +86,8 @@ export class LoginComponent implements OnInit {
         return;
       }
       this.auth.setupInitial(this.username, this.password, this.confirmPassword).subscribe({
-        next: ok => {
-          if (ok) {
+        next: (response) => {
+          if (response.success) {
             // 初始化成功后，执行正常登录获取 token
             this.auth.login(this.username, this.password).subscribe({
               next: logged => {
@@ -103,14 +103,14 @@ export class LoginComponent implements OnInit {
                 this.error = this.translate.instant('LOGIN.ERROR_INVALID');
               }
             });
-          } else {
+          }  else  {
             this.loading = false;
             this.error = this.translate.instant('LOGIN.ERROR_SETUP_FAILED');
           }
         },
-        error: () => {
+        error: (err) => {
+          this.error = err.error?.message || this.translate.instant('LOGIN.ERROR_SETUP_FAILED');
           this.loading = false;
-          this.error = this.translate.instant('LOGIN.ERROR_SETUP_FAILED');
         }
       });
       return;

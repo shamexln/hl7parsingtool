@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const { TABLE_HL7_PATIENTS, DATABASE_FILE, TABLE_HL7_CODESYSTEMS, TABLE_HL7_CODESYSTEM_300} = require('./config');
-const { SQLITE_INTEGER_MAX } = require('./constants');
+const { SQLITE_INTEGER_MAX, OBSOLETED_DEFAULT_VALUE} = require('./constants');
 const winston = require('winston');
 
 // 日志配置示例（仅供参考，你项目中可能已有此配置）
@@ -141,6 +141,7 @@ async function initializeDatabase() {
                           password_enc BLOB NOT NULL,
                           iv BLOB NOT NULL,
                           tag BLOB NOT NULL,
+                          obsoleted TEXT DEFAULT ${OBSOLETED_DEFAULT_VALUE},
                           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                       )`);
         logger.info(`Table "password" created or already exists.`);

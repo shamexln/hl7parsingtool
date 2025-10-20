@@ -104,8 +104,8 @@
   "PASSWORD": {
     "MANAGEMENT": "Gestión de contraseñas",
     "CYCLE": {
-      "TITLE": "Ciclo de contraseña",
-      "SELECT_LABEL": "Periodo",
+      "TITLE": "Ciclo de caducidad de la contraseña",
+      "SELECT_LABEL": "Ciclo de caducidad",
       "OPTIONS": {
         "NEVER": "Nunca",
         "1M": " 1 mes",
@@ -113,18 +113,18 @@
         "6M": " 6 meses",
         "1Y": " 1 año"
       },
-      "ERROR_INVALID": "Ciclo inválido",
-      "SUCCESS_SAVED": "Ciclo de actualización de contraseña guardado",
-      "ERROR_SAVE_FAILED": "No se pudo guardar el ciclo de actualización de contraseña"
+      "ERROR_INVALID": "Ciclo de caducidad no válido",
+      "SUCCESS_SAVED": "Ciclo de caducidad de la contraseña guardado",
+      "ERROR_SAVE_FAILED": "Error al guardar el ciclo de caducidad de la contraseña"
     },
     "CHANGE": {
-      "TITLE": "Cambiar contraseña",
-      "CURRENT_LABEL": "Contraseña actual",
-      "NEW_LABEL": "Nueva contraseña",
-      "CONFIRM_LABEL": "Confirmar contraseña",
-      "CURRENT_PLACEHOLDER": "Introducir contraseña actual",
-      "NEW_PLACEHOLDER": "Introducir nueva contraseña",
-      "CONFIRM_PLACEHOLDER": "Confirmar nueva contraseña",
+      "TITLE": "Modificar contraseña",
+      "CURRENT_LABEL": "Contraseña anterior",
+      "NEW_LABEL": "Contraseña nueva",
+      "CONFIRM_LABEL": "Confirmar contraseña nueva",
+      "CURRENT_PLACEHOLDER": "Introduce la contraseña actual",
+      "NEW_PLACEHOLDER": "Introduce la nueva contraseña",
+      "CONFIRM_PLACEHOLDER": "Confirma la nueva contraseña",
       "ERROR_INVALID": "Por favor introduzca una contraseña válida",
       "ERROR_MISMATCH": "La nueva contraseña y la confirmación no coinciden",
       "ERROR_LENGTH": "La nueva contraseña debe tener al menos 8 caracteres",

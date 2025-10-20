@@ -51,11 +51,8 @@ export class AuthService {
   }
 
   // 首次初始化：双输入密码提交到后端，后端不校验直接存库
-  setupInitial(username: string, password: string, confirmPassword: string): Observable<boolean> {
-    return this.http.post<SetupInitialRes>('/api/auth/setup-initial', { username, password, confirmPassword }).pipe(
-      map(res => res?.success === true),
-      catchError(() => of(false))
-    );
+  setupInitial(username: string, password: string, confirmPassword: string): Observable<SetupInitialRes> {
+    return this.http.post<SetupInitialRes>('/api/auth/setup-initial', { username, password, confirmPassword });
   }
 
   // 登录：保存 accessToken 和 refreshToken（仅内存）
