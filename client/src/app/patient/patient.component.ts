@@ -93,7 +93,7 @@ export class PatientComponent implements OnInit {
   pageSize: number = this.pageSizeValue.value;
   totalPages = 0;
   totalItems = 0;
-  previousPageIndex = 0; // 默认第一页索引通常为0
+  previousPageIndex = 0;
   fieldstyle = FormFieldVariant.HORIZONTAL;
 
   formGroup = new FormGroup({
@@ -118,7 +118,7 @@ export class PatientComponent implements OnInit {
 
   private filteredData(): TableData[] {
     const data: TableData[] = [];
-    // 从信号获取最新值
+    // Get the latest value from the signal
     const patientDataArray = this.patientData();
 
     if (patientDataArray && Array.isArray(patientDataArray)) {
@@ -185,7 +185,7 @@ export class PatientComponent implements OnInit {
   @Input()
   identityMatcher = (item1: OptionValue | null, item2: OptionValue | null): boolean => {
     if (item1 == null || item2 == null) {
-      return false; // 或其他逻辑
+      return false;
     }
     return item1.value === item2.value;
   };
@@ -205,8 +205,8 @@ export class PatientComponent implements OnInit {
       next: (data) => {
         const result = Array.isArray(data) && data.length > 0 ? data[0] : null;
         if (result) {
-          /*this.patientData = result.rows || [];*/
-          this.patientData.set(result.rows || []); // 设置新数据（响应式的信号更新）
+          // Set new data (reactive signal update).
+          this.patientData.set(result.rows || []);
           this.page = result.page;
           this.pageSize = result.pageSize;
           this.totalPages = result.totalPages;
@@ -245,9 +245,9 @@ export class PatientComponent implements OnInit {
       console.log('page not changed');
     }
 
-    this.previousPageIndex = currentPageIndex; // 更新页码记录
+    this.previousPageIndex = currentPageIndex;
 
-    // 更新当前页状态，用于后端API请求
+    // Update the current page state for backend API requests
     this.page = currentPageIndex + 1;
     this.pageSize = event.pageSize;
 
@@ -258,7 +258,7 @@ export class PatientComponent implements OnInit {
       ,
     });
 
-    this.queryPatient(this.page); // 调用API重新加载对应页的数据
+    this.queryPatient(this.page);
   }
 
   handlePageSizeChange() {
@@ -295,12 +295,10 @@ const EXCEL_EXTENSION = 'xlsx';
 function formatDateToSql(date: Date): string {
   const year = date.getFullYear();
 
-  // getMonth() 返回的月份是从 0 开始的 (0 代表一月), 所以需要加 1
-  // toString().padStart(2, '0') 用于确保月份是两位数 (例如 '05' 而不是 '5')
+  // getMonth() returns the month starting from 0 (0 means January), so you need to add 1.
+  // toString().padStart(2, '0') ensures the month is two digits (e.g., '05' instead of '5').
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
 
-  // getDate() 返回的是月份中的第几天
-  // toString().padStart(2, '0') 用于确保天数是两位数
   const day = date.getDate().toString().padStart(2, '0');
 
   return `${year}-${month}-${day}`;

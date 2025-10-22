@@ -250,7 +250,7 @@ export class CodesystemdetailComponent implements OnInit {
 
         } else {
           this.codesystemData.set([]);
-          this.errorMessage = this.translate.instant('CODESYSTEM.ERRMSG.INVALID_DATA_FORMAT');
+          this.errorMessage = this.translate.instant('MSG.INVALID_DATA_FORMAT');
           console.error("Server returned invalid data format", data);
         }
 

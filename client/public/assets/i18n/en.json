@@ -14,10 +14,7 @@
     "USERNAME_PLACEHOLDER": "Enter username",
     "PASSWORD_PLACEHOLDER": "Enter password",
     "SUBMIT": "Log in",
-    "ERROR_INVALID": "Please enter a valid username and password.",
     "LOGGED_OUT": "You have been logged out.",
-    "ERROR_PASSWORD_MISMATCH": "Passwords do not match.",
-    "ERROR_SETUP_FAILED": "Initial setup failed.",
     "ERROR_PASSWORD_EXPIRED": "Password expired, please refresh and change your password.",
     "LANGUAGE": {
       "LABEL": "Language",
@@ -80,11 +77,8 @@
       "TITLE": "HL7 Parsing Tool Server"
     },
     "HL7_RECEIVER": {
-      "TITLE": "HL7_RECEIVER"
-    },
-    "ERROR_INVALID_PORT": "Please enter a valid port number (1-65535)",
-    "ERROR_UPDATE_PORT_FAILED": "Failed to update port configuration",
-    "HTTP_ERROR_UPDATE_PORT_FAILED": "Failed to update HTTP port configuration"
+      "TITLE": "HL7 RECEIVER"
+    }
   },
   "COMMON": {
     "SERVER_ADDRESS": "Server Address",
@@ -113,10 +107,7 @@
         "2M": " 2 Months",
         "6M": " 6 Months",
         "1Y": " 1 Year"
-      },
-      "ERROR_INVALID": "Invalid expiration cycle",
-      "SUCCESS_SAVED": "Password expiration cycle saved",
-      "ERROR_SAVE_FAILED": "Failed to save password expiration cycle"
+      }
     },
     "CHANGE": {
       "TITLE": "Modify Password",
@@ -125,20 +116,11 @@
       "CONFIRM_LABEL": "Confirm New Password",
       "CURRENT_PLACEHOLDER":"Enter old password",
       "NEW_PLACEHOLDER":"Enter new password",
-      "CONFIRM_PLACEHOLDER":"Confirm new password",
-      "ERROR_INVALID": "Please enter a valid password",
-      "ERROR_MISMATCH": "New password and confirm password do not match",
-      "ERROR_LENGTH": "New password must be at least 8 characters",
-      "ERROR_SAME": "New password must differ from the previous one",
-      "SUCCESS": "Password changed successfully",
-      "ERROR_FAILED": "Failed to change password"
+      "CONFIRM_PLACEHOLDER":"Confirm new password"
     }
   },
   "CODESYSTEM": {
     "HEADER": "Code System",
-    "ERRMSG": {
-      "INVALID_DATA_FORMAT": "Server returned invalid data format"
-    },
     "UPDATED_COUNT": "Total {{count}} data are updated.",
     "DETAIL": {
       "TABLE": {
@@ -168,5 +150,30 @@
       "SAVED": "Saved",
       "ERROR_INVALID_MINUTES": "Please enter a valid positive number of minutes"
     }
+  },
+  "MSG": {
+    "InternalServerError": "Internal server error",
+    "INVALID_DATA_FORMAT": "Server returned invalid data format",
+    "Unauthorized": "Unauthorized",
+    "DatabaseError": "Database error",
+    "UserNotFound": "User not found",
+    "OldPasswordIncorrect": "Old password is incorrect",
+    "SamePassword": "New password must differ from the previous one",
+    "PasswordMismatch": "Passwords do not match",
+    "PasswordInvalid": "Please enter a valid password",
+    "LoginFailed": "Login failed",
+    "LengthNotEnough": "New password must be at least 8 characters",
+    "PasswordChangeSuccess": "Password changed successfully",
+    "PasswordChangeFailed": "Failed to change password",
+    "PasswordTooSimple": "Password is too simple (obvious sequence)",
+    "PasswordMissing": "Missing password",
+    "ExpirationCycleINVALID": "Invalid expiration cycle",
+    "ExpirationCycleSaveSuccess": "Password expiration cycle saved",
+    "ExpirationCycleSaveFail": "Failed to save password expiration cycle",
+    "InvalidPort": "Please enter a valid port number (1-65535)",
+    "RetrievePortFail": "Failed to retrieve port configuration",
+    "UpdatePortFail": "Failed to update port configuration",
+    "UpdatePortSuccess": "Port configuration updated successfully",
+    "PortMissing": "At least one port (tcpPort or httpPort) must be provided"
   }
 }

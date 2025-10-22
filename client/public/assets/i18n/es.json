@@ -168,5 +168,30 @@
       "SAVED": "Guardado",
       "ERROR_INVALID_MINUTES": "Por favor introduzca un número válido de minutos positivo"
     }
+  },
+  "MSG": {
+    "InternalServerError": "Error interno del servidor",
+    "INVALID_DATA_FORMAT": "El servidor devolvió un formato de datos no válido",
+    "Unauthorized": "No autorizado",
+    "DatabaseError": "Error de base de datos",
+    "UserNotFound": "Usuario no encontrado",
+    "OldPasswordIncorrect": "La contraseña anterior es incorrecta",
+    "SamePassword": "La nueva contraseña debe ser diferente de la anterior",
+    "PasswordMismatch": "Las contraseñas no coinciden",
+    "PasswordInvalid": "Por favor, introduzca una contraseña válida",
+    "LoginFailed": "Error al iniciar sesión",
+    "LengthNotEnough": "La nueva contraseña debe tener al menos 8 caracteres",
+    "PasswordChangeSuccess": "La contraseña se cambió correctamente",
+    "PasswordChangeFailed": "Error al cambiar la contraseña",
+    "PasswordTooSimple": "La contraseña es demasiado simple (secuencia obvia)",
+    "PasswordMissing": "Falta la contraseña",
+    "ExpirationCycleINVALID": "Ciclo de expiración no válido",
+    "ExpirationCycleSaveSuccess": "Ciclo de expiración de la contraseña guardado",
+    "ExpirationCycleSaveFail": "Error al guardar el ciclo de expiración de la contraseña",
+    "InvalidPort": "Por favor, introduzca un número de puerto válido (1–65535)",
+    "RetrievePortFail": "Error al obtener la configuración del puerto",
+    "UpdatePortFail": "Error al actualizar la configuración del puerto",
+    "UpdatePortSuccess": "Configuración del puerto actualizada correctamente",
+    "PortMissing": "Debe proporcionarse al menos un puerto (tcpPort o httpPort)"
   }
 }

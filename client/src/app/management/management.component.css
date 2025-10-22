@@ -30,6 +30,18 @@
   margin: 0;
   font-size: 16px;
   font-weight: 500;
+  /* Prevent long titles from squeezing the action button */
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+ /* text-overflow: ellipsis;*/
+  /*white-space: nowrap;*/
+}
+
+/* Keep the action button from shrinking */
+.card-header .card-actions {
+  flex: 0 0 auto;
+  margin-left: 12px;
 }
 
 .card-content {
@@ -58,7 +70,7 @@
 
 /* Layout grid for management page */
 .config-grid { display: flex; gap: 20px; align-items: flex-start; }
-.config-grid .column { flex: 1 1 0; min-width: 340px; display: flex; flex-direction: column; gap: 20px; }
+.config-grid .column { flex: 1 1 0; min-width: 400px; display: flex; flex-direction: column; gap: 20px; }
 
 /* Responsive: stack on narrow screens */
 @media (max-width: 900px) {

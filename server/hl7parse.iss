@@ -45,6 +45,7 @@ Source: "300_map.xml"; DestDir: "{app}"; Flags: ignoreversion uninsremovereadonl
 Source: "dist\hl7parse.exe"; DestDir: "{app}"; Flags: ignoreversion uninsremovereadonly
 Source: "tools\nssm.exe"; DestDir: "{app}\tools"; Flags: ignoreversion uninsremovereadonly
 Source: "public\*"; DestDir: "{app}\public"; Flags: ignoreversion recursesubdirs createallsubdirs uninsremovereadonly
+Source: "version"; DestDir: "{app}"; Flags: ignoreversion uninsremovereadonly
 
 [Icons]
 Name: "{autoprograms}\{#MyDirectoryName}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

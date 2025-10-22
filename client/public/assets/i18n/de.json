@@ -14,10 +14,7 @@
     "USERNAME_PLACEHOLDER": "Benutzername eingeben",
     "PASSWORD_PLACEHOLDER": "Passwort eingeben",
     "SUBMIT": "Anmelden",
-    "ERROR_INVALID": "Bitte geben Sie einen gültigen Benutzernamen und ein gültiges Passwort ein",
     "LOGGED_OUT": "Sie wurden abgemeldet.",
-    "ERROR_PASSWORD_MISMATCH": "Die Passwörter stimmen nicht überein.",
-    "ERROR_SETUP_FAILED": "Initiale Einrichtung fehlgeschlagen.",
     "ERROR_PASSWORD_EXPIRED": "Passwort abgelaufen, bitte aktualisieren und ändern Sie Ihr Passwort.",
     "LANGUAGE": {
       "LABEL": "Sprache",
@@ -81,10 +78,7 @@
     },
     "HL7_RECEIVER": {
       "TITLE": "HL7-Empfänger"
-    },
-    "ERROR_INVALID_PORT": "Bitte geben Sie eine gültige Portnummer ein (1-65535)",
-    "ERROR_UPDATE_PORT_FAILED": "Aktualisierung der Portkonfiguration fehlgeschlagen",
-    "HTTP_ERROR_UPDATE_PORT_FAILED": "Aktualisierung der HTTP-Portkonfiguration fehlgeschlagen"
+    }
   },
   "COMMON": {
     "SERVER_ADDRESS": "Serveradresse",
@@ -113,10 +107,7 @@
         "2M": " 2 Monate",
         "6M": " 6 Monate",
         "1Y": " 1 Jahr"
-      },
-      "ERROR_INVALID": "Ungültiger Ablaufzyklus",
-      "SUCCESS_SAVED": "Passwortablaufzyklus gespeichert",
-      "ERROR_SAVE_FAILED": "Speichern des Passwortablaufzyklus fehlgeschlagen"
+      }
     },
     "CHANGE": {
       "TITLE": "Kennwort ändern",
@@ -125,20 +116,11 @@
       "CONFIRM_LABEL": "Neues Kennwort bestätigen",
       "CURRENT_PLACEHOLDER": "Geben Sie das alte Kennwort ein\"",
       "NEW_PLACEHOLDER": "Geben Sie das neue Kennwort ein",
-      "CONFIRM_PLACEHOLDER": "Bestätigen Sie das neue Kennwort",
-      "ERROR_INVALID": "Bitte geben Sie ein gültiges Passwort ein",
-      "ERROR_MISMATCH": "Neues Passwort und Bestätigung stimmen nicht überein",
-      "ERROR_LENGTH": "Das neue Passwort muss mindestens 8 Zeichen lang sein",
-      "ERROR_SAME": "Das neue Passwort muss sich vom vorherigen unterscheiden",
-      "SUCCESS": "Passwort erfolgreich geändert",
-      "ERROR_FAILED": "Ändern des Passworts fehlgeschlagen"
+      "CONFIRM_PLACEHOLDER": "Bestätigen Sie das neue Kennwort"
     }
   },
   "CODESYSTEM": {
     "HEADER": "Codesystem",
-    "ERRMSG": {
-      "INVALID_DATA_FORMAT": "Der Server hat ein ungültiges Datenformat zurückgegeben"
-    },
     "UPDATED_COUNT": "Insgesamt {{count}} Daten wurden aktualisiert.",
     "DETAIL": {
       "TABLE": {
@@ -168,5 +150,30 @@
       "SAVED": "Gespeichert",
       "ERROR_INVALID_MINUTES": "Bitte geben Sie eine gültige positive Minutenanzahl ein"
     }
+  },
+  "MSG": {
+    "InternalServerError": "Interner Serverfehler",
+    "INVALID_DATA_FORMAT": "Ungültiges Datenformat vom Server",
+    "Unauthorized": "Nicht autorisiert",
+    "DatabaseError": "Datenbankfehler",
+    "UserNotFound": "Benutzer nicht gefunden",
+    "OldPasswordIncorrect": "Das alte Passwort ist falsch",
+    "SamePassword": "Das neue Passwort muss sich vom bisherigen unterscheiden",
+    "PasswordMismatch": "Passwörter stimmen nicht überein",
+    "PasswordInvalid": "Bitte geben Sie ein gültiges Passwort ein",
+    "LoginFailed": "Anmeldung fehlgeschlagen",
+    "LengthNotEnough": "Das neue Passwort muss mindestens 8 Zeichen lang sein",
+    "PasswordChangeSuccess": "Passwort erfolgreich geändert",
+    "PasswordChangeFailed": "Passwortänderung fehlgeschlagen",
+    "PasswordTooSimple": "Passwort ist zu einfach (offensichtliche Sequenz)",
+    "PasswordMissing": "Passwort fehlt",
+    "ExpirationCycleINVALID": "Ungültiger Ablaufzyklus",
+    "ExpirationCycleSaveSuccess": "Passwort-Ablaufzyklus gespeichert",
+    "ExpirationCycleSaveFail": "Speichern des Passwort-Ablaufzyklus fehlgeschlagen",
+    "InvalidPort": "Bitte geben Sie eine gültige Portnummer ein (1–65535)",
+    "RetrievePortFail": "Abrufen der Portkonfiguration fehlgeschlagen",
+    "UpdatePortFail": "Aktualisierung der Portkonfiguration fehlgeschlagen",
+    "UpdatePortSuccess": "Portkonfiguration erfolgreich aktualisiert",
+    "PortMissing": "Mindestens ein Port (tcpPort oder httpPort) muss angegeben werden"
   }
 }

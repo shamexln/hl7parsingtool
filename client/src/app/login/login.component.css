@@ -21,3 +21,7 @@
 .lang-item:hover{background:#f3f6fb}
 .lang-item.selected{background:#e9f1ff}
 .checkmark{color:#163b63;margin-left:12px;font-weight:600}
+
+/* Login footer with company logo */
+.login-footer{position:absolute;bottom:24px;left:0;right:0;display:flex;justify-content:center}
+.login-footer .draeger-logo{height:36px;width:auto;opacity:.95}

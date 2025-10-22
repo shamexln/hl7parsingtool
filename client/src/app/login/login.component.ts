@@ -79,37 +79,47 @@ export class LoginComponent implements OnInit {
     this.loading = true;
 
     if (this.isFirstLogin) {
-      // 首次登录：需要二次输入密码确认，然后调用初始化接口
+      // First login: you need to enter the password twice to confirm,
       if (this.password !== this.confirmPassword) {
         this.loading = false;
-        this.error = this.translate.instant('LOGIN.ERROR_PASSWORD_MISMATCH');
+        this.error = this.translate.instant('MSG.PasswordMismatch');
         return;
       }
+
+      if (this.password.length < 8) {
+        this.loading = false;
+        this.error = this.translate.instant('MSG.LengthNotEnough');
+        return;
+      }
+
       this.auth.setupInitial(this.username, this.password, this.confirmPassword).subscribe({
         next: (response) => {
           if (response.success) {
-            // 初始化成功后，执行正常登录获取 token
+            // After successful initialization, perform a normal login to obtain the token.
             this.auth.login(this.username, this.password).subscribe({
               next: logged => {
                 this.loading = false;
                 if (logged) {
                   this.router.navigate(['/patient-query']);
                 } else {
-                  this.error = this.translate.instant('LOGIN.ERROR_INVALID');
+                  this.error = this.translate.instant('MSG.PasswordInvalid');
                 }
               },
               error: () => {
                 this.loading = false;
-                this.error = this.translate.instant('LOGIN.ERROR_INVALID');
+                this.error = this.translate.instant('MSG.PasswordInvalid');
               }
             });
           }  else  {
             this.loading = false;
-            this.error = this.translate.instant('LOGIN.ERROR_SETUP_FAILED');
+            this.error = this.translate.instant('MSG.LoginFailed');
           }
         },
         error: (err) => {
-          this.error = err.error?.message || this.translate.instant('LOGIN.ERROR_SETUP_FAILED');
+          const msg = err?.error?.message;
+          this.error = typeof msg === 'string'
+            ? this.translate.instant(msg)
+            : this.translate.instant('MSG.LoginFailed');
           this.loading = false;
         }
       });
@@ -123,7 +133,7 @@ export class LoginComponent implements OnInit {
         if (ok) {
           this.router.navigate(['/patient-query']);
         } else {
-          this.error = this.translate.instant('LOGIN.ERROR_INVALID');
+          this.error = this.translate.instant('MSG.PasswordInvalid');
         }
       },
       error: (err) => {
@@ -134,7 +144,7 @@ export class LoginComponent implements OnInit {
           window.location.reload();
           return;
         }
-        this.error = this.translate.instant('LOGIN.ERROR_INVALID');
+        this.error = this.translate.instant('MSG.PasswordInvalid');
       }
     });
   }

@@ -46,15 +46,15 @@ function createHttpApp() {
             const authHeader = req.headers['authorization'] || '';
             const m = authHeader.match(/^Bearer\s+(.+)$/i);
             const token = m ? m[1] : null;
-            if (!token) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            if (!token) return res.status(401).json({ success: false, message: 'MSG.Unauthorized' });
             try {
                 jwt.verify(token, GLOBAL_AUTH_SECRET);
                 return next();
             } catch {
-                return res.status(401).json({ success: false, message: 'Unauthorized' });
+                return res.status(401).json({ success: false, message: 'MSG.Unauthorized' });
             }
         } catch (e) {
-            return res.status(500).json({ success: false, message: 'Internal server error' });
+            return res.status(500).json({ success: false, message: 'MSG.InternalServerError' });
         }
     });
 
@@ -228,7 +228,7 @@ function createHttpApp() {
             // Validate port values
             if (!tcpPort && !httpPort) {
                 return res.status(400).json({
-                    success: false, message: "At least one port (tcpPort or httpPort) must be provided"
+                    success: false, message: "MSG.PortMissing"
                 });
             }
 
@@ -240,7 +240,7 @@ function createHttpApp() {
             if (tcpPort !== undefined) {
                 if (!isValidPort(Number(tcpPort))) {
                     return res.status(400).json({
-                        success: false, message: "Invalid TCP port. Port must be a number between 1 and 65535."
+                        success: false, message: "MSG.InvalidPort"
                     });
                 }
                 newConfig.tcpPort = Number(tcpPort);
@@ -250,7 +250,7 @@ function createHttpApp() {
             if (httpPort !== undefined) {
                 if (!isValidPort(Number(httpPort))) {
                     return res.status(400).json({
-                        success: false, message: "Invalid HTTP port. Port must be a number between 1 and 65535."
+                        success: false, message: "MSG.InvalidPort"
                     });
                 }
                 newConfig.httpPort = Number(httpPort);
@@ -261,14 +261,14 @@ function createHttpApp() {
 
             // Return success response
             res.json({
-                success: true, message: "Port configuration updated successfully", config: newConfig
+                success: true, message: "MSG.UpdatePortSuccess", config: newConfig
             });
 
             logger.info(`Port configuration updated via API: TCP port ${newConfig.tcpPort}, HTTP port ${newConfig.httpPort}`);
         } catch (error) {
             logger.error(`Error updating port configuration: ${error.message}`);
             res.status(500).json({
-                success: false, message: "Failed to update port configuration", error: error.message
+                success: false, message: "MSG.UpdatePortFail", error: error.message
             });
         }
     });
@@ -290,7 +290,7 @@ function createHttpApp() {
         } catch (error) {
             logger.error(`Error retrieving port configuration: ${error.message}`);
             res.status(500).json({
-                success: false, message: "Failed to retrieve port configuration", error: error.message
+                success: false, message: "MSG.RetrievePortFail", error: error.message
             });
         }
     });
@@ -562,12 +562,12 @@ function createHttpApp() {
             const { password } = req.body || {};
             const targetUser = 'admin';
             if (!password) {
-                return res.status(400).json({ success: false, message: 'Missing password' });
+                return res.status(400).json({ success: false, message: 'MSG.PasswordMissing' });
             }
 
             // simple sequence checks
             if (isObviousSequence(String(password))) {
-                return res.status(400).json({ success: false, message: 'Password is too simple (obvious sequence)' });
+                return res.status(400).json({ success: false, message: 'MSG.PasswordTooSimple' });
             }
 
             const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
@@ -594,7 +594,7 @@ function createHttpApp() {
                             const storedPwd = decryptText(userRow.password_enc, userRow.iv, userRow.tag);
                             if (storedPwd === (String(password))) {
                                 db.close();
-                                return res.status(400).json({ success: false, message: 'New password must differ from the previous one' });
+                                return res.status(400).json({ success: false, message: 'MSG.SamePassword' });
                             }
 
                             const existingUsername = userRow.username;
@@ -753,15 +753,15 @@ function createHttpApp() {
         try {
             const { oldPassword, newPassword } = req.body || {};
             if (!oldPassword || !newPassword) {
-                return res.status(400).json({ success: false, message: 'Missing oldPassword or newPassword' });
+                return res.status(400).json({ success: false, message: 'MSG.PasswordInvalid' });
             }
             if (String(newPassword).length < 8) {
-                return res.status(400).json({ success: false, message: 'New password must be at least 8 characters' });
+                return res.status(400).json({ success: false, message: 'MSG.LengthNotEnough' });
             }
 
             // simple sequence checks
             if (isObviousSequence(String(newPassword))) {
-                return res.status(400).json({ success: false, message: 'New password is too simple (obvious sequence)' });
+                return res.status(400).json({ success: false, message: 'MSG.PasswordTooSimple' });
             }
 
             // Verify JWT from Authorization header
@@ -769,7 +769,7 @@ function createHttpApp() {
             const m = authHeader.match(/^Bearer\s+(.+)$/i);
             const token = m ? m[1] : null;
             if (!token) {
-                return res.status(401).json({ success: false, message: 'Unauthorized' });
+                return res.status(401).json({ success: false, message: 'MSG.Unauthorized' });
             }
 
             let username;
@@ -777,10 +777,10 @@ function createHttpApp() {
                 const payload = jwt.verify(token, AUTH_SECRET);
                 username = payload && payload.sub;
             } catch (e) {
-                return res.status(401).json({ success: false, message: 'Unauthorized' });
+                return res.status(401).json({ success: false, message: 'MSG.Unauthorized' });
             }
             if (!username) {
-                return res.status(401).json({ success: false, message: 'Unauthorized' });
+                return res.status(401).json({ success: false, message: 'MSG.Unauthorized' });
             }
 
             const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
@@ -788,27 +788,27 @@ function createHttpApp() {
                 if (err) {
                     db.close();
                     logger.error('DB error during change-password:', err);
-                    return res.status(500).json({ success: false, message: 'Database error' });
+                    return res.status(500).json({ success: false, message: 'MSG.DatabaseError' });
                 }
                 if (!row) {
                     db.close();
-                    return res.status(404).json({ success: false, message: 'User not found' });
+                    return res.status(404).json({ success: false, message: 'MSG.UserNotFound' });
                 }
 
                 try {
                     const storedPwd = decryptText(row.password_enc, row.iv, row.tag);
                     if (storedPwd !== oldPassword) {
                         db.close();
-                        return res.status(400).json({ success: false, message: 'Old password is incorrect' });
+                        return res.status(400).json({ success: false, message: 'MSG.OldPasswordIncorrect' });
                     }
                     if (storedPwd === String(newPassword)) {
                         db.close();
-                        return res.status(400).json({ success: false, message: 'New password must differ from the previous one' });
+                        return res.status(400).json({ success: false, message: 'MSG.SamePassword' });
                     }
                 } catch (e) {
                     db.close();
                     logger.error('Decrypt error during change-password:', e);
-                    return res.status(500).json({ success: false, message: 'Internal error' });
+                    return res.status(500).json({ success: false, message: 'MSG.InternalServerError' });
                 }
 
                 const { enc, iv, tag } = encryptText(newPassword);
@@ -817,7 +817,7 @@ function createHttpApp() {
                     if (uErr || !uRow) {
                         db.close();
                         if (uErr) logger.error('DB error fetching UID:', uErr);
-                        return res.status(500).json({ success: false, message: 'Failed to update password' });
+                        return res.status(500).json({ success: false, message: 'MSG.PasswordChangeFailed' });
                     }
                     const uid = uRow.uid;
                     db.serialize(() => {
@@ -825,7 +825,7 @@ function createHttpApp() {
                             if (updErr) {
                                 logger.error('DB error updating password:', updErr);
                                 db.close();
-                                return res.status(500).json({ success: false, message: 'Failed to update password' });
+                                return res.status(500).json({ success: false, message: 'MSG.PasswordChangeFailed' });
                             }
                         });
                         if (uid) {
@@ -833,7 +833,7 @@ function createHttpApp() {
                                 if (updErr) {
                                     logger.error('DB error updating password history:', updErr);
                                     db.close();
-                                    return res.status(500).json({ success: false, message: 'Failed to update password' });
+                                    return res.status(500).json({ success: false, message: 'MSG.PasswordChangeFailed' });
                                 }
                                 return res.json({ success: true });
                             });
@@ -841,7 +841,7 @@ function createHttpApp() {
                                 db.close();
                                 if (insErr) {
                                     logger.error('DB error inserting password history:', insErr);
-                                    return res.status(500).json({ success: false, message: 'Failed to update password' });
+                                    return res.status(500).json({ success: false, message: 'MSG.PasswordChangeFailed' });
                                 }
                                 return res.json({ success: true });
                             });
@@ -854,7 +854,7 @@ function createHttpApp() {
             });
         } catch (error) {
             logger.error(`Error changing password: ${error.message}`);
-            return res.status(500).json({ success: false, message: 'Internal server error' });
+            return res.status(500).json({ success: false, message: 'MSG.InternalServerError' });
         }
     });
 
@@ -892,17 +892,17 @@ function createHttpApp() {
             const authHeader = req.headers['authorization'] || '';
             const m = authHeader.match(/^Bearer\s+(.+)$/i);
             const token = m ? m[1] : null;
-            if (!token) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            if (!token) return res.status(401).json({ success: false, message: 'MSG.Unauthorized' });
             let username;
-            try { username = jwt.verify(token, AUTH_SECRET)?.sub; } catch { return res.status(401).json({ success: false, message: 'Unauthorized' }); }
-            if (!username) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            try { username = jwt.verify(token, AUTH_SECRET)?.sub; } catch { return res.status(401).json({ success: false, message: 'MSG.Unauthorized' }); }
+            if (!username) return res.status(401).json({ success: false, message: 'MSG.Unauthorized' });
 
             ensurePasswordCycleColumn((colErr) => {
-                if (colErr) return res.status(500).json({ success: false, message: 'Internal error' });
+                if (colErr) return res.status(500).json({ success: false, message: 'MSG.InternalServerError' });
                 const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READONLY);
                 db.get('SELECT password_cycle_days FROM users WHERE username = ?', [username], (err, row) => {
                     db.close();
-                    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+                    if (err) return res.status(500).json({ success: false, message: 'MSG.DatabaseError' });
                     let cycleToken = (row && row.password_cycle_days != null) ? String(row.password_cycle_days) : String(SQLITE_INTEGER_MAX);
                     if (/^\d+$/.test(cycleToken)) {
                         const asNum = Number(cycleToken);
@@ -916,7 +916,7 @@ function createHttpApp() {
             });
         } catch (e) {
             logger.error('Error getting password-cycle:', e);
-            return res.status(500).json({ success: false, message: 'Internal server error' });
+            return res.status(500).json({ success: false, message: 'MSG.InternalServerError' });
         }
     });
 
@@ -924,12 +924,12 @@ function createHttpApp() {
         try {
             const { cycle } = req.body || {};
             if (!cycle) {
-                return res.status(400).json({ success: false, message: 'Invalid cycle. Allowed: -1, 1m, 2m, 6m, 1y' });
+                return res.status(400).json({ success: false, message: 'MSG.ExpirationCycleINVALID' });
             }
             const tokenIn = String(cycle);
             const allowed = ['-1','1m','2m','6m','1y'];
             if (!allowed.includes(tokenIn)) {
-                return res.status(400).json({ success: false, message: 'Invalid cycle. Allowed: -1, 1m, 2m, 6m, 1y' });
+                return res.status(400).json({ success: false, message: 'MSG.ExpirationCycleINVALID' });
             }
 
             const cycleToken = CYCLE_MAP[tokenIn] !== undefined ? CYCLE_MAP[tokenIn] : SQLITE_INTEGER_MAX;
@@ -938,26 +938,26 @@ function createHttpApp() {
             const authHeader = req.headers['authorization'] || '';
             const m = authHeader.match(/^Bearer\s+(.+)$/i);
             const token = m ? m[1] : null;
-            if (!token) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            if (!token) return res.status(401).json({ success: false, message: 'MSG.Unauthorized' });
             let username;
             try { username = jwt.verify(token, AUTH_SECRET)?.sub; } catch { return res.status(401).json({ success: false, message: 'Unauthorized' }); }
-            if (!username) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            if (!username) return res.status(401).json({ success: false, message: 'MSG.Unauthorized' });
 
             ensurePasswordCycleColumn((colErr) => {
-                if (colErr) return res.status(500).json({ success: false, message: 'Internal error' });
+                if (colErr) return res.status(500).json({ success: false, message: 'MSG.InternalServerError' });
                 const db = new sqlite3.Database(DATABASE_FILE, sqlite3.OPEN_READWRITE);
                 db.run('UPDATE users SET password_cycle_days = ? WHERE username = ?', [cycleToken, username], (updErr) => {
                     db.close();
                     if (updErr) {
                         logger.error('DB error updating password cycle:', updErr);
-                        return res.status(500).json({ success: false, message: 'Failed to update password cycle' });
+                        return res.status(500).json({ success: false, message: 'MSG.ExpirationCycleSaveFail' });
                     }
                     return res.json({ success: true });
                 });
             });
         } catch (e) {
             logger.error('Error setting password-cycle:', e);
-            return res.status(500).json({ success: false, message: 'Internal server error' });
+            return res.status(500).json({ success: false, message: 'MSG.InternalServerError' });
         }
     });
 

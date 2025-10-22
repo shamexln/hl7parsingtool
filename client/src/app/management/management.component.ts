@@ -117,19 +117,16 @@ export class ManagementComponent implements OnInit {
     this.cycleSuccessMessage = '';
     const allowed = ['-1', '1m', '2m', '6m', '1y'];
     if (!allowed.includes(this.selectedCycle)) {
-      const msg = this.translate.instant('PASSWORD.CYCLE.ERROR_INVALID');
-      this.cycleErrorMessage = msg && msg !== 'PASSWORD.CYCLE.ERROR_INVALID' ? msg : 'Invalid cycle';
+      this.cycleErrorMessage = this.translate.instant('MSG.ExpirationCycleINVALID');
       return;
     }
     this.isCycleSaving = true;
     this.securityService.setPasswordCycle(this.selectedCycle).subscribe({
       next: (res) => {
         if (res && res.success) {
-          const ok = this.translate.instant('PASSWORD.CYCLE.SUCCESS_SAVED');
-          this.cycleSuccessMessage = ok && ok !== 'PASSWORD.CYCLE.SUCCESS_SAVED' ? ok : 'Password update cycle saved';
+          this.cycleSuccessMessage = this.translate.instant('MSG.ExpirationCycleSaveSuccess');
         } else {
-          const msg = this.translate.instant('PASSWORD.CYCLE.ERROR_SAVE_FAILED');
-          this.cycleErrorMessage = res?.message || (msg && msg !== 'PASSWORD.CYCLE.ERROR_SAVE_FAILED' ? msg : 'Failed to save password update cycle');
+          this.cycleErrorMessage = this.translate.instant('MSG.ExpirationCycleSaveFail');
         }
         this.isCycleSaving = false;
       },
@@ -147,26 +144,22 @@ export class ManagementComponent implements OnInit {
     this.passwordSuccessMessage = '';
 
     if (!this.oldPassword || !this.newPassword || !this.confirmPassword) {
-      const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_INVALID');
-      this.passwordErrorMessage = msg && msg !== 'PASSWORD.CHANGE.ERROR_INVALID' ? msg : 'Please enter a valid password';
+      this.passwordErrorMessage = this.translate.instant('MSG.PasswordInvalid');
       return;
     }
 
     if (this.newPassword.length < 8) {
-      const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_LENGTH');
-      this.passwordErrorMessage = msg && msg !== 'PASSWORD.CHANGE.ERROR_LENGTH' ? msg : 'New password must be at least 8 characters';
+      this.passwordErrorMessage = this.translate.instant('MSG.LengthNotEnough');
       return;
     }
 
     if (this.newPassword === this.oldPassword) {
-      const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_SAME');
-      this.passwordErrorMessage = msg && msg !== 'PASSWORD.CHANGE.ERROR_SAME' ? msg : 'New password must differ from the previous one';
+      this.passwordErrorMessage = this.translate.instant('MSG.SamePassword');
       return;
     }
 
     if (this.newPassword !== this.confirmPassword) {
-      const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_MISMATCH');
-      this.passwordErrorMessage = msg && msg !== 'PASSWORD.CHANGE.ERROR_MISMATCH' ? msg : 'New password and confirm password do not match';
+      this.passwordErrorMessage = this.translate.instant('MSG.PasswordMismatch');
       return;
     }
 
@@ -175,20 +168,20 @@ export class ManagementComponent implements OnInit {
     this.securityService.changePassword(this.oldPassword, this.newPassword).subscribe({
       next: (response) => {
         if (response.success) {
-          const ok = this.translate.instant('PASSWORD.CHANGE.SUCCESS');
-          this.passwordSuccessMessage = ok && ok !== 'PASSWORD.CHANGE.SUCCESS' ? ok : 'Password changed successfully';
+          this.passwordSuccessMessage = this.translate.instant('MSG.PasswordChangeSuccess');
           this.oldPassword = '';
           this.newPassword = '';
           this.confirmPassword = '';
         } else {
-          const msg = this.translate.instant('PASSWORD.CHANGE.ERROR_FAILED');
-          this.passwordErrorMessage = response.message || (msg && msg !== 'PASSWORD.CHANGE.ERROR_FAILED' ? msg : 'Failed to change password');
+          this.passwordErrorMessage = this.translate.instant('MSG.PasswordChangeFailed');
         }
         this.isPasswordSaving = false;
       },
       error: (error) => {
-        const msg = this.translate.instant('COMMON.ERROR_NETWORK');
-        this.passwordErrorMessage = error.error?.message || (msg && msg !== 'COMMON.ERROR_NETWORK' ? msg : 'Failed to connect to server');
+        const msg = error?.error?.message;
+        this.passwordErrorMessage = typeof msg === 'string'
+          ? this.translate.instant(msg)
+          : this.translate.instant('COMMON.ERROR_NETWORK');
         this.isPasswordSaving = false;
       }
     });

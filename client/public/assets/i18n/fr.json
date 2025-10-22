@@ -14,10 +14,7 @@
     "USERNAME_PLACEHOLDER": "Entrer le nom d'utilisateur",
     "PASSWORD_PLACEHOLDER": "Entrer le mot de passe",
     "SUBMIT": "Se connecter",
-    "ERROR_INVALID": "Veuillez entrer un nom d'utilisateur et un mot de passe valides",
     "LOGGED_OUT": "Vous avez été déconnecté.",
-    "ERROR_PASSWORD_MISMATCH": "Les mots de passe ne correspondent pas.",
-    "ERROR_SETUP_FAILED": "La configuration initiale a échoué.",
     "ERROR_PASSWORD_EXPIRED": "Mot de passe expiré, veuillez actualiser et changer votre mot de passe.",
     "LANGUAGE": {
       "LABEL": "Langue",
@@ -81,10 +78,7 @@
     },
     "HL7_RECEIVER": {
       "TITLE": "Récepteur HL7"
-    },
-    "ERROR_INVALID_PORT": "Veuillez entrer un numéro de port valide (1-65535)",
-    "ERROR_UPDATE_PORT_FAILED": "Échec de la mise à jour de la configuration du port",
-    "HTTP_ERROR_UPDATE_PORT_FAILED": "Échec de la mise à jour de la configuration du port HTTP"
+    }
   },
   "COMMON": {
     "SERVER_ADDRESS": "Adresse du serveur",
@@ -113,10 +107,7 @@
         "2M": " 2 mois",
         "6M": " 6 mois",
         "1Y": " 1 an"
-      },
-      "ERROR_INVALID": "Cycle d'expiration invalide",
-      "SUCCESS_SAVED": "Cycle d'expiration du mot de passe enregistré",
-      "ERROR_SAVE_FAILED": "Échec de l'enregistrement du cycle d'expiration du mot de passe"
+      }
     },
     "CHANGE": {
       "TITLE": "Modif mot de passe",
@@ -125,20 +116,11 @@
       "CONFIRM_LABEL": "Conf. nouveau mot de passe",
       "CURRENT_PLACEHOLDER": "Saisissez l'ancien mot de passe",
       "NEW_PLACEHOLDER": "Saisissez le nouveau mot de passe",
-      "CONFIRM_PLACEHOLDER": "Confirmez le nouveau mot de passe",
-      "ERROR_INVALID": "Veuillez entrer un mot de passe valide",
-      "ERROR_MISMATCH": "Le nouveau mot de passe et la confirmation ne correspondent pas",
-      "ERROR_LENGTH": "Le nouveau mot de passe doit comporter au moins 8 caractères",
-      "ERROR_SAME": "Le nouveau mot de passe doit être différent de l'ancien",
-      "SUCCESS": "Mot de passe modifié avec succès",
-      "ERROR_FAILED": "Échec du changement de mot de passe"
+      "CONFIRM_PLACEHOLDER": "Confirmez le nouveau mot de passe"
     }
   },
   "CODESYSTEM": {
     "HEADER": "Système de codes",
-    "ERRMSG": {
-      "INVALID_DATA_FORMAT": "Le serveur a renvoyé un format de données invalide"
-    },
     "UPDATED_COUNT": "Un total de {{count}} données ont été mises à jour.",
     "DETAIL": {
       "TABLE": {
@@ -168,5 +150,30 @@
       "SAVED": "Enregistré",
       "ERROR_INVALID_MINUTES": "Veuillez entrer un nombre de minutes positif valide"
     }
+  },
+  "MSG": {
+    "InternalServerError": "Erreur interne du serveur",
+    "INVALID_DATA_FORMAT": "Le serveur a renvoyé un format de données invalide",
+    "Unauthorized": "Non autorisé",
+    "DatabaseError": "Erreur de base de données",
+    "UserNotFound": "Utilisateur introuvable",
+    "OldPasswordIncorrect": "L'ancien mot de passe est incorrect",
+    "SamePassword": "Le nouveau mot de passe doit être différent de l'ancien",
+    "PasswordMismatch": "Les mots de passe ne correspondent pas",
+    "PasswordInvalid": "Veuillez saisir un mot de passe valide",
+    "LoginFailed": "Échec de la connexion",
+    "LengthNotEnough": "Le nouveau mot de passe doit contenir au moins 8 caractères",
+    "PasswordChangeSuccess": "Mot de passe modifié avec succès",
+    "PasswordChangeFailed": "Échec de la modification du mot de passe",
+    "PasswordTooSimple": "Le mot de passe est trop simple (séquence évidente)",
+    "PasswordMissing": "Mot de passe manquant",
+    "ExpirationCycleINVALID": "Cycle d'expiration invalide",
+    "ExpirationCycleSaveSuccess": "Cycle d'expiration du mot de passe enregistré",
+    "ExpirationCycleSaveFail": "Échec de l'enregistrement du cycle d'expiration du mot de passe",
+    "InvalidPort": "Veuillez saisir un numéro de port valide (1–65535)",
+    "RetrievePortFail": "Échec de la récupération de la configuration du port",
+    "UpdatePortFail": "Échec de la mise à jour de la configuration du port",
+    "UpdatePortSuccess": "Configuration du port mise à jour avec succès",
+    "PortMissing": "Au moins un port (tcpPort ou httpPort) doit être fourni"
   }
 }
