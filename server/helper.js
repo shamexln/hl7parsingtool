@@ -241,7 +241,7 @@ const helpFunctions = {
 
 // 根据 obxValueType 处理其他不同的字段
         switch (obxValueType) {
-            case 'NM':
+            case 'NM': {
                 result.observationValue = obx.getField(5);
 
                 // 从OBX-6提取单位代码和名称
@@ -260,8 +260,8 @@ const helpFunctions = {
                     result.upperLim = rangeComponents[1] || null;
                 }
                 break;
-
-            case 'CWE':
+            }
+            case 'CWE': {
                 // 从OBX-5提取limViolation信息
                 const evtType = obx.getField(5);
                 if(evtType){
@@ -269,7 +269,7 @@ const helpFunctions = {
                     result.limViolation = evtComponents[0] || null;
                 }
                 break;
-
+            }
 
         }
 

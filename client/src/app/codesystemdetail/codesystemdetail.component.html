@@ -103,11 +103,7 @@
   </div>
 </div>
 <ng-template [odxModal]="args" #modal="odxModal" let-modalRef>
-<!--  <odx-modal-header>
-    <odx-area-header>{{ 'APP.TITLE' | translate }}</odx-area-header>
-  </odx-modal-header>-->
   <odx-modal-hero [icon]="modalRef.data?.heroIcon" [variant]="modalRef.data?.heroVariant">
-   <!-- {{ 'APP.TITLE' | translate }}-->
   </odx-modal-hero>
   <odx-modal-content>
     <p>
@@ -115,6 +111,6 @@
     </p>
   </odx-modal-content>
   <odx-modal-footer>
-    <button odxButton variant="primary" odxModalClose>Close</button>
+    <button odxButton variant="primary" odxModalClose>{{ 'COMMON.CLOSE' | translate }}</button>
   </odx-modal-footer>
 </ng-template>

@@ -172,7 +172,7 @@ function createHttpApp() {
             res.end();
 
         } catch (error) {
-            console.error('export excel fail:', error);
+            logger.error('export excel fail:', error);
             res.status(500).send('export excel fail');
         } finally {
             db.close();
@@ -835,7 +835,6 @@ function createHttpApp() {
                                     db.close();
                                     return res.status(500).json({ success: false, message: 'MSG.PasswordChangeFailed' });
                                 }
-                                return res.json({ success: true });
                             });
                             db.run('INSERT INTO password (uid, password_enc, iv, tag, created_at) VALUES (?, ?, ?, ?, ?)', [uid, enc, iv, tag, nowIso], (insErr) => {
                                 db.close();

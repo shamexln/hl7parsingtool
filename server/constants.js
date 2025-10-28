@@ -1,4 +1,6 @@
-const SQLITE_INTEGER_MAX = 9223372036854775807;
+const logger = require("./logger");
+// Use the maximum safe integer in JavaScript to avoid precision loss issues
+const SQLITE_INTEGER_MAX = Number.MAX_SAFE_INTEGER;
 const OBSOLETED_DEFAULT_VALUE = 0;
 
 /**
@@ -11,16 +13,37 @@ function isPasswordCycleExpired(cycleDays, createdTime) {
     const days = Number(cycleDays);
     if (!days || days >= SQLITE_INTEGER_MAX || days < 0) return false; // 不限周期
     if (!createdTime) return false;
-    let createdAt;
+
+    // 解析创建时间为时间戳（毫秒）
+    let createdAtMs;
     if (typeof createdTime === 'number') {
-        createdAt = createdTime;
+        createdAtMs = createdTime;
     } else if (createdTime instanceof Date) {
-        createdAt = createdTime.getTime();
+        createdAtMs = createdTime.getTime();
     } else {
-        createdAt = new Date(createdTime).getTime();
+        createdAtMs = new Date(createdTime).getTime();
     }
-    if (!createdAt || isNaN(createdAt)) return false;
-    return (Date.now() - createdAt) > (days * 24 * 60 * 60 * 1000);
+    if (!createdAtMs || isNaN(createdAtMs)) return false;
+
+    const nowMs = Date.now();
+    logger.info(`Password is created at:${createdAtMs}`);
+    logger.info(`Now is :${nowMs}`);
+
+    // 使用基于日历的计算，避免夏令时/时区导致的小时数误差
+    const created = new Date(createdAtMs);
+    const now = new Date(nowMs);
+    const createdUTC0 = Date.UTC(created.getUTCFullYear(), created.getUTCMonth(), created.getUTCDate());
+    const nowUTC0 = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const daysElapsed = Math.floor((nowUTC0 - createdUTC0) / (24 * 60 * 60 * 1000));
+
+    logger.info(`Calendar days elapsed:${daysElapsed}`);
+    logger.info(`CycleDays :${days}`);
+
+    // 如果创建时间在未来，则未过期
+    if (daysElapsed < 0) return false;
+
+    // 当日历上达到或超过指定天数即视为过期
+    return daysElapsed >= days;
 }
 
 function isObviousSequence(password) {

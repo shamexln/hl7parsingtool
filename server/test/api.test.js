@@ -1,5 +1,5 @@
 const axios = require('axios');
-const {LISTCODESYSTEM_API} = require("./config");
+const {LISTCODESYSTEM_API} = require("../config");
 
 const API_URL = 'http://localhost:3000';
 

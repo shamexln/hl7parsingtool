@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 // Http requests moved to services
@@ -8,11 +8,12 @@ import { CardModule} from '@odx/angular/components/card';
 import {AreaHeaderComponent} from '@odx/angular/components/area-header';
 import {ButtonComponent, ButtonVariant} from '@odx/angular/components/button';
 import { TranslateModule, TranslateService} from '@ngx-translate/core';
+import {ModalDirective, ModalModule, ModalOptions, ModalSize} from '@odx/angular/components/modal';
 import { SessionIdleService } from '../session-idle.service';
 @Component({
   selector: 'app-configuration',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, AreaHeaderComponent, ButtonComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, CardModule, AreaHeaderComponent, ButtonComponent, TranslateModule, ModalModule],
   templateUrl: './configuration.component.html',
   styleUrl: './configuration.component.css'
 })
@@ -34,28 +35,23 @@ export class ConfigurationComponent implements OnInit {
   isHttpSaving: boolean = false;
   httpErrorMessage: string = '';
 
-  // Change Password
-  oldPassword: string = '';
-  newPassword: string = '';
-  confirmPassword: string = '';
-  isPasswordSaving: boolean = false;
-  passwordErrorMessage: string = '';
-  passwordSuccessMessage: string = '';
+  @ViewChild('modal', { static: true }) modal!: ModalDirective;
+  args: Partial<ModalOptions> | "" | null | undefined;
 
   constructor(private configService: ConfigurationService, private securityService: SecurityService, private translate: TranslateService, private idle: SessionIdleService) {}
 
-  // Auto Log-off
-  autoLogoffSelect: 'Never' | 'Custom' = 'Never';
-  autoLogoffMinutes: number = 0;
-  autoLogoffMessage: string = '';
-  isAutoLogoffSaving: boolean = false;
-
-  // Password cycle management
-  selectedCycle: string = 'Never';
-  isCycleSaving: boolean = false;
-  cycleErrorMessage: string = '';
-  cycleSuccessMessage: string = '';
-
+  openModalWithData(message: string, heroIcon: string = 'info', heroVariant: string = 'success', afterClose?: () => void) {
+    // Set args; the data field will be passed to modalRef.data
+    this.args =  {
+      data: { message, heroIcon, heroVariant } ,
+      size: ModalSize.XSMALL
+    };
+    this.modal.open();
+    const sub = this.modal.modalClose?.subscribe(() => {
+      sub?.unsubscribe();
+      if (afterClose) afterClose();
+    });
+  }
   ngOnInit(): void {
     // Load saved port configurations from the server
     this.loadPortConfigurations();
@@ -81,77 +77,11 @@ export class ConfigurationComponent implements OnInit {
       },
       error: (error) => {
         console.error('Failed to load port configurations:', error);
-        // Fallback to local storage if API fails
-        this.loadFromLocalStorage();
+        // No local storage fallback; leave current values unchanged
       }
     });
   }
 
-  // Auto Log-off setting
-  loadAutoLogoff(): void {
-    try {
-      const minStr = localStorage.getItem('autoLogoffMinutes');
-      const n = minStr == null ? 0 : Number(minStr);
-      if (Number.isFinite(n) && n > 0) {
-        this.autoLogoffSelect = 'Custom';
-        this.autoLogoffMinutes = Math.floor(n);
-      } else {
-        this.autoLogoffSelect = 'Never';
-        this.autoLogoffMinutes = 0;
-      }
-      // Ensure service is in sync
-      this.idle.update(this.autoLogoffMinutes);
-    } catch {
-      this.autoLogoffSelect = 'Never';
-      this.autoLogoffMinutes = 0;
-      this.idle.update(0);
-    }
-  }
-
-  saveAutoLogoff(): void {
-    this.autoLogoffMessage = '';
-    this.isAutoLogoffSaving = true;
-    // Validate
-    let minutes = 0;
-    if (this.autoLogoffSelect === 'Custom') {
-      minutes = Number(this.autoLogoffMinutes);
-      if (!Number.isFinite(minutes) || minutes <= 0) {
-        this.isAutoLogoffSaving = false;
-        this.autoLogoffMessage = 'Please enter a valid positive number of minutes';
-        return;
-      }
-      minutes = Math.floor(minutes);
-    }
-    try {
-      localStorage.setItem('autoLogoffMinutes', String(minutes));
-    } catch {}
-    // Update idle service
-    this.idle.update(minutes);
-    this.isAutoLogoffSaving = false;
-    this.autoLogoffMessage = 'Saved';
-  }
-
-  onAutoLogoffSelectChange(): void {
-    if (this.autoLogoffSelect === 'Never') {
-      this.autoLogoffMinutes = 0;
-    }
-  }
-
-  loadFromLocalStorage(): void {
-    // Fallback to local storage for TCP port
-    const savedPort = localStorage.getItem('apiPort');
-    if (savedPort) {
-      this.port = savedPort;
-      this.savedPort = savedPort;
-    }
-
-    // Fallback to local storage for HTTP port
-    const savedHttpPort = localStorage.getItem('httpPort');
-    if (savedHttpPort) {
-      this.httpPort = savedHttpPort;
-      this.savedHttpPort = savedHttpPort;
-    }
-  }
 
   startEditing(): void {
     this.isEditing = true;
@@ -165,7 +95,7 @@ export class ConfigurationComponent implements OnInit {
 
   savePortConfiguration(): void {
     // Validate port
-    if (!this.port || isNaN(Number(this.port)) || Number(this.port) < 1 || Number(this.port) > 65535) {
+    if (!this.port || isNaN(Number(this.port)) || Number(this.port) < 2000 || Number(this.port) > 65535) {
       this.errorMessage = this.translate.instant('MSG.InvalidPort');
       return;
     }
@@ -180,8 +110,9 @@ export class ConfigurationComponent implements OnInit {
           // Update saved port value
           this.savedPort = this.port;
 
-          // Also save to local storage as fallback
-          localStorage.setItem('apiPort', this.port);
+          // Prompt user to restart service to apply changes
+          const message = this.translate.instant('MSG.RestartServiceNotice');
+          this.openModalWithData(message,'info', 'success', ()=> {});
 
           this.isSaving = false;
           this.isEditing = false;
@@ -213,7 +144,7 @@ export class ConfigurationComponent implements OnInit {
 
   saveHttpPortConfiguration(): void {
     // Validate port
-    if (!this.httpPort || isNaN(Number(this.httpPort)) || Number(this.httpPort) < 1 || Number(this.httpPort) > 65535) {
+    if (!this.httpPort || isNaN(Number(this.httpPort)) || Number(this.httpPort) < 2000 || Number(this.httpPort) > 65535) {
       this.httpErrorMessage = this.translate.instant('MSG.InvalidPort');
       return;
     }
@@ -228,8 +159,9 @@ export class ConfigurationComponent implements OnInit {
           // Update saved port value
           this.savedHttpPort = this.httpPort;
 
-          // Also save to local storage as fallback
-          localStorage.setItem('httpPort', this.httpPort);
+          // Prompt user to restart service to apply changes
+          const message = this.translate.instant('MSG.RestartServiceNotice');
+          this.openModalWithData(message,'info', 'success', ()=> {});
 
           this.isHttpSaving = false;
           this.isHttpEditing = false;

@@ -9,6 +9,9 @@ const { startHttpServer, restartHttpServer } = require('./http-server');
 // Define portConfigPath outside the async function so it's accessible to fs.watch
 const portConfigPath = path.join(process.cwd(), 'port-config.json');
 let portConfig = { tcpPort: 3359, httpPort: 3000 };
+// Hoist server references so fs.watch callback can access and update them
+let tcpServer = null;
+let httpServer = null;
 
 // Initialize database and code system asynchronously, then start servers
 (async function init() {
@@ -32,8 +35,8 @@ let portConfig = { tcpPort: 3359, httpPort: 3000 };
     }
 
     // Start servers only after initialization is complete
-    let tcpServer = createTcpServer(portConfig.tcpPort);
-    let httpServer = startHttpServer(portConfig.httpPort);
+    tcpServer = createTcpServer(portConfig.tcpPort);
+    httpServer = startHttpServer(portConfig.httpPort);
 
     // Set the exported variables
     module.exports.tcpServer = tcpServer;
@@ -90,12 +93,14 @@ fs.watch(portConfigPath, (eventType) => {
         if (newConfig.tcpPort !== portConfig.tcpPort) {
           logger.info(`TCP port changed from ${portConfig.tcpPort} to ${newConfig.tcpPort}`);
           tcpServer = await restartTcpServer(tcpServer, newConfig.tcpPort);
+          module.exports.tcpServer = tcpServer;
         }
 
         // Check if HTTP port changed
         if (newConfig.httpPort !== portConfig.httpPort) {
           logger.info(`HTTP port changed from ${portConfig.httpPort} to ${newConfig.httpPort}`);
           httpServer = await restartHttpServer(httpServer, newConfig.httpPort);
+          module.exports.httpServer = httpServer;
         }
 
         // Update current configuration
@@ -118,7 +123,9 @@ fs.watch(portConfigPath, (eventType) => {
 });
 
 // Export for testing
-// Initially export just portConfig, tcpServer and httpServer will be set after initialization
+// Export current references; tcpServer and httpServer will be set after initialization
 module.exports = {
-  portConfig
+  portConfig,
+  tcpServer,
+  httpServer
 };

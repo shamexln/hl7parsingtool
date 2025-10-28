@@ -1,4 +1,4 @@
-const index = require('./index');
+const index = require('../index');
 
 // Wait a short time to allow the async initialization to complete
 setTimeout(() => {

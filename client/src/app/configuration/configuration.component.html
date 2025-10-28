@@ -94,6 +94,18 @@
     </div>
 
 
+      <ng-template [odxModal]="args" #modal="odxModal" let-modalRef>
+        <odx-modal-hero [icon]="modalRef.data?.heroIcon" [variant]="modalRef.data?.heroVariant">
+        </odx-modal-hero>
+        <odx-modal-content>
+          <p>
+            <strong>{{ modalRef.data?.message }}</strong>
+          </p>
+        </odx-modal-content>
+        <odx-modal-footer>
+          <button odxButton variant="primary" odxModalClose>{{ 'COMMON.CLOSE' | translate }}</button>
+        </odx-modal-footer>
+      </ng-template>
 
-  </div>
-</div>
+      </div>
+    </div>

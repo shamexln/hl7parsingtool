@@ -363,17 +363,76 @@ async function initializeCodeSystem(xmlData = CODE_SYSTEM) {
                 return {success: false, message: 'Invalid mapping name'};
             }
 
-            // Check if name already exists
-            if (CodeSystemMappings[name]) {
-                return {success: false, message: 'A mapping with this name already exists'};
-            }
+            // According name to check the data is in the table, if there are data in the table
+            // read data from database back to encodeToTagMap
+            if (await CheckIsDataincodesystemTable(name)) {
+                // Because the database is newer than xml file(always original file)
+                // read data from database back to encodeToTagMap
+                try {
+                    // 1) Determine which table to read from for this codesystem name
+                    const tableName = await getCodesystemTableNameByName(name);
 
-            CodeSystemMappings[name] = {
-                tags: allTags,
-                createdAt: now,
-                updatedAt: now
-            };
-            await updateDetailCodeSystem(TABLE_HL7_CODESYSTEM_300, CodeSystemMappings[name].tags, false);
+                    // 2) Read all tags from DB and rebuild in-memory structures
+                    const db = new sqlite3.Database(DATABASE_FILE);
+                    const dbAll = util.promisify(db.all).bind(db);
+                    try {
+                        const rows = await dbAll(
+                            `SELECT tagkey, observationtype, datatype, encode, parameterlabel, encodesystem, subid, description,
+                                    source, mds, mdsid, vmd, vmdid, channel, channelid
+                             FROM ${tableName}`
+                        );
+                        // Normalize rows into tag objects (ensure string values)
+                        const dbTags = (rows || []).map(r => ({
+                            tagkey: r.tagkey,
+                            observationtype: r.observationtype,
+                            datatype: r.datatype,
+                            encode: r.encode,
+                            parameterlabel: r.parameterlabel,
+                            encodesystem: r.encodesystem,
+                            subid: r.subid,
+                            description: r.description,
+                            source: r.source,
+                            mds: r.mds,
+                            mdsid: r.mdsid,
+                            vmd: r.vmd,
+                            vmdid: r.vmdid,
+                            channel: r.channel,
+                            channelid: r.channelid
+                        }));
+
+                        // Rebuild global caches from DB data
+                        allTags = dbTags;
+                        encodeToTagMap = buildSpecificKeyIndex(allTags, ['encode']);
+
+                        // Ensure mapping object exists before updating
+                        if (!CodeSystemMappings[name]) {
+                            CodeSystemMappings[name] = { tags: [], createdAt: now, updatedAt: now };
+                        }
+                        // Update the in-memory mapping timestamp and tags
+                        CodeSystemMappings[name].tags = allTags;
+                        CodeSystemMappings[name].updatedAt = new Date();
+
+                        logger.info(`Loaded existing codesystem '${name}' from database table '${tableName}' into memory.`);
+                    } finally {
+                        db.close();
+                    }
+
+                    // Successfully synced from DB; do not treat as error
+                    return { success: true, message: `Mapping '${name}' already exists; reloaded from database.` };
+                } catch (e) {
+                    logger.error(`Failed to reload existing mapping '${name}' from database:`, e);
+                    return { success: false, message: `Failed to reload existing mapping '${name}' from database` };
+                }
+            } else {
+                // if CodeSystemMappings[name] not exist, create it (in-memory and persist to DB)
+                CodeSystemMappings[name] = {
+                    tags: allTags,
+                    createdAt: now,
+                    updatedAt: now
+                };
+                // only insert data into table
+                await updateDetailCodeSystem(TABLE_HL7_CODESYSTEM_300, CodeSystemMappings[name].tags, { forceUpdate: false });
+            }
             logger.info('Code system initialized successfully.');
 
         } else {
@@ -437,7 +496,7 @@ function getSourceChannel(encode, subid) {
         const matchingTag = result.find(encodes =>
             encodes.encode && encodes.subid === subid && encodes.encode === encode
         );
-        return matchingTag ? encodes.source + '/' + encodes.channel : undefined;
+        return matchingTag ? matchingTag.source + '/' + matchingTag.channel : undefined;
     } else {
         return undefined;
     }
@@ -584,6 +643,35 @@ async function getCodesystemTableNameByName(name) {
     });
 }
 
+
+// 根据名称检查对应的 codesystem 明细表中是否存在数据
+// According to the zh comment, check if there is data in the codesystem detail table for the given name
+async function CheckIsDataincodesystemTable(name) {
+    try {
+        const tableName = await getCodesystemTableNameByName(name);
+        const db = new sqlite3.Database(DATABASE_FILE);
+        const dbGet = util.promisify(db.get).bind(db);
+        try {
+            // 1) Ensure table exists
+            const tableRow = await dbGet("SELECT name FROM sqlite_master WHERE type='table' AND name = ?", [tableName]);
+            if (!tableRow) {
+                logger.warn(`Codesystem detail table not found: ${tableName}`);
+                return false;
+            }
+            // 2) Check if there is any data in the table
+            const countRow = await dbGet(`SELECT COUNT(*) AS cnt FROM ${tableName}`);
+            return (countRow && Number(countRow.cnt) > 0);
+        } catch (err) {
+            logger.error(`CheckIsDataincodesystemTable error for '${name}':`, err);
+            return false;
+        } finally {
+            db.close();
+        }
+    } catch (e) {
+        logger.error(`Failed to resolve table name for codesystem '${name}':`, e);
+        return false;
+    }
+}
 
 module.exports = {
     initializeCodeSystem,

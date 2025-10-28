@@ -4,9 +4,18 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:test": "ng serve --port 4200 -c development --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "cy:run": "cypress run",
+    "cy:open": "cypress open",
+    "cy:run:backend": "cypress run --spec cypress/e2e/*.backend.cy.ts",
+    "cy:open:backend": "cypress open --e2e --config specPattern=cypress/e2e/*.backend.cy.ts",
+    "e2e": "npx -y start-server-and-test start:test http://localhost:4200 cy:run",
+    "e2e:open": "npx -y start-server-and-test start:test http://localhost:4200 cy:open",
+    "e2e:backend": "npx -y start-server-and-test start:test http://localhost:4200 cy:run:backend",
+    "e2e:backend:open": "npx -y start-server-and-test start:test http://localhost:4200 cy:open:backend"
   },
   "private": true,
   "dependencies": {
@@ -34,12 +43,14 @@
     "@angular/compiler-cli": "^19.2.0",
     "@types/file-saver": "^2.0.7",
     "@types/jasmine": "~5.1.0",
+    "cypress": "^13.13.2",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "start-server-and-test": "^2.0.3"
   }
 }

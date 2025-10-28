@@ -76,10 +76,9 @@ export class ManagementComponent implements OnInit {
     let minutes = 0;
     if (this.autoLogoffSelect === 'Custom') {
       minutes = Number(this.autoLogoffMinutes);
-      if (!Number.isFinite(minutes) || minutes <= 0) {
+      if (!Number.isFinite(minutes) || minutes <= 0 || minutes > 60) {
         this.isAutoLogoffSaving = false;
-        const msg = this.translate.instant('MANAGEMENT.AUTO_LOGOFF.ERROR_INVALID_MINUTES');
-        this.autoLogoffMessage = msg && msg !== 'MANAGEMENT.AUTO_LOGOFF.ERROR_INVALID_MINUTES' ? msg : 'Please enter a valid positive number of minutes';
+        this.autoLogoffMessage  = this.translate.instant('MANAGEMENT.AUTO_LOGOFF.ERROR_INVALID_MINUTES');
         return;
       }
       minutes = Math.floor(minutes);
@@ -90,8 +89,7 @@ export class ManagementComponent implements OnInit {
     // Update idle service
     this.idle.update(minutes);
     this.isAutoLogoffSaving = false;
-    const ok = this.translate.instant('MANAGEMENT.AUTO_LOGOFF.SAVED');
-    this.autoLogoffMessage = ok && ok !== 'MANAGEMENT.AUTO_LOGOFF.SAVED' ? ok : 'Saved';
+    this.autoLogoffMessage = this.translate.instant('MANAGEMENT.AUTO_LOGOFF.SAVED');
   }
 
   onAutoLogoffSelectChange(): void {
